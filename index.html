@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual do Voluntário — Turma de Primeira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --orange: #F47C20;
+            --orange-dark: #D4610A;
+            --orange-light: #FFA44F;
+            --orange-pale: #FFF3E8;
+            --orange-glow: rgba(244, 124, 32, 0.15);
+            --cream: #FFFBF5;
+            --white: #FFFFFF;
+            --text: #1E1A16;
+            --text-soft: #5A4F44;
+            --text-muted: #9A8F84;
+            --border: #EDE0D4;
+            --green: #2D8A4E;
+            --green-bg: #EEF8F2;
+            --blue: #2563AB;
+            --blue-bg: #EBF3FC;
+            --yellow-bg: #FFFBEB;
+            --yellow-border: #F59E0B;
+            --radius: 14px;
+            --shadow: 0 4px 24px rgba(244, 124, 32, 0.10);
+            --shadow-lg: 0 12px 48px rgba(244, 124, 32, 0.18);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: var(--white);
+            border-right: 2px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform .3s ease;
+        }
+
+        .sidebar-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 2px solid var(--orange-pale);
+        }
+
+        .sidebar-logo .ministry-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--orange);
+            line-height: 1.2;
+        }
+
+        .sidebar-logo .church-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 4px;
+        }
+
+        .sidebar-logo .badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: var(--orange);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .nav-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 20px 24px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 24px;
+            text-decoration: none;
+            color: var(--text-soft);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-left: 3px solid transparent;
+            transition: all .2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--orange);
+            background: var(--orange-pale);
+            border-left-color: var(--orange);
+        }
+
+        .nav-item .nav-icon {
+            font-size: 1rem;
+            width: 22px;
+            text-align: center;
+        }
+
+        .nav-item .nav-number {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            min-width: 18px;
+        }
+
+        /* ── MAIN ── */
+        .main {
+            margin-left: 270px;
+            min-height: 100vh;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange) 50%, var(--orange-light) 100%);
+            padding: 80px 64px 72px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 80% at 90% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 4vw, 3.6rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .hero .subtitle {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+            max-width: 560px;
+            line-height: 1.6;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 36px;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* ── VERSE BANNER ── */
+        .verse-banner {
+            background: var(--text);
+            padding: 40px 64px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verse-banner::before {
+            content: '"';
+            position: absolute;
+            font-family: 'Playfair Display', serif;
+            font-size: 16rem;
+            color: rgba(244, 124, 32, 0.1);
+            top: -40px;
+            left: 20px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .verse-bar {
+            width: 5px;
+            min-height: 64px;
+            background: var(--orange);
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .verse-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.92);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .verse-ref {
+            display: block;
+            margin-top: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-style: normal;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--orange);
+        }
+
+        /* ── CONTENT AREA ── */
+        .content {
+            padding: 64px;
+            max-width: 860px;
+        }
+
+        /* ── SECTION ── */
+        .section {
+            margin-bottom: 72px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-num {
+            background: var(--orange);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 900;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+        }
+
+        .section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .subsection {
+            margin: 28px 0;
+        }
+
+        .subsection h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--orange-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subsection h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--orange);
+            border-radius: 2px;
+        }
+
+        p {
+            color: var(--text-soft);
+            margin-bottom: 14px;
+            line-height: 1.75;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        strong {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        /* ── LISTS ── */
+        ul.styled,
+        ol.styled {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 14px 0;
+        }
+
+        ul.styled li,
+        ol.styled li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--text-soft);
+            font-size: 0.92rem;
+        }
+
+        ul.styled li::before {
+            content: '▸';
+            color: var(--orange);
+            font-size: 0.8rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        ol.styled {
+            counter-reset: item;
+        }
+
+        ol.styled li {
+            counter-increment: item;
+        }
+
+        ol.styled li::before {
+            content: counter(item);
+            background: var(--orange);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 900;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ── CALLOUT BOXES ── */
+        .callout {
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            margin: 20px 0;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            border: 1.5px solid;
+        }
+
+        .callout-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .callout-body {
+            flex: 1;
+        }
+
+        .callout-title {
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 6px;
+        }
+
+        .callout p {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .callout p:last-child {
+            margin-bottom: 0;
+        }
+
+        .callout.warning {
+            background: var(--yellow-bg);
+            border-color: var(--yellow-border);
+        }
+
+        .callout.warning .callout-title {
+            color: #92400E;
+        }
+
+        .callout.info {
+            background: var(--blue-bg);
+            border-color: #93C5FD;
+        }
+
+        .callout.info .callout-title {
+            color: var(--blue);
+        }
+
+        .callout.success {
+            background: var(--green-bg);
+            border-color: #86EFAC;
+        }
+
+        .callout.success .callout-title {
+            color: var(--green);
+        }
+
+        .callout.orange {
+            background: var(--orange-pale);
+            border-color: var(--orange-light);
+        }
+
+        .callout.orange .callout-title {
+            color: var(--orange-dark);
+        }
+
+        /* ── CHECKLIST TABLE ── */
+        .checklist-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 20px 0;
+            font-size: 0.88rem;
+        }
+
+        .checklist-table thead tr {
+            background: var(--orange);
+        }
+
+        .checklist-table thead th {
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.72rem;
+            padding: 13px 16px;
+            text-align: left;
+        }
+
+        .checklist-table tbody tr {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+
+        .checklist-table tbody tr:hover {
+            background: var(--orange-pale);
+        }
+
+        .checklist-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-table td {
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        .checklist-table td:first-child {
+            width: 48px;
+            text-align: center;
+        }
+
+        .check-box {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--orange-light);
+            border-radius: 6px;
+            display: inline-block;
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+        }
+
+        .check-box.checked {
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .check-box.checked::after {
+            content: '✓';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 900;
+        }
+
+        .step-label {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .step-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .step-timing {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--orange-dark);
+            background: var(--orange-pale);
+            padding: 2px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        /* ── DEADLINE BADGE ── */
+        .deadline {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--orange);
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin: 8px 0;
+        }
+
+        /* ── INFO CARD GRID ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: box-shadow .2s, border-color .2s;
+        }
+
+        .info-card:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--orange-light);
+        }
+
+        .info-card .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .info-card .card-title {
+            font-weight: 800;
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        /* ── EXAMPLE BOX ── */
+        .example-box {
+            background: #1E1A16;
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .example-box::before {
+            content: 'EXEMPLO';
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--orange);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+
+        .example-box p {
+            color: rgba(255, 255, 255, 0.85);
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            margin: 0;
+            line-height: 1.8;
+        }
+
+        .example-box strong {
+            color: var(--orange-light);
+        }
+
+        /* ── GOLDEN RULE ── */
+        .golden-rule {
+            background: linear-gradient(135deg, var(--orange-dark), var(--orange));
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin: 24px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .golden-rule::before {
+            content: '★';
+            position: absolute;
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.06);
+            top: -20px;
+            right: 20px;
+            pointer-events: none;
+        }
+
+        .golden-rule p {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+            margin: 0;
+        }
+
+        .golden-rule .rule-title {
+            font-size: 0.72rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+        }
+
+        /* ── THREE-PHASE TIMELINE ── */
+        .timeline {
+            display: flex;
+            gap: 0;
+            margin: 20px 0;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .timeline-phase {
+            flex: 1;
+            padding: 20px 16px;
+            background: var(--white);
+            border-right: 2px solid var(--border);
+        }
+
+        .timeline-phase:last-child {
+            border-right: none;
+        }
+
+        .timeline-phase-title {
+            font-size: 0.72rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--orange);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .timeline-phase ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .timeline-phase li {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-soft);
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .timeline-phase li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--orange-light);
+        }
+
+        /* ── VIDEO PLACEHOLDER ── */
+        .video-placeholder {
+            border: 2px dashed var(--orange-light);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            background: var(--orange-pale);
+            margin: 16px 0;
+        }
+
+        .video-placeholder .vp-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .video-placeholder .vp-title {
+            font-weight: 800;
+            color: var(--orange-dark);
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .video-placeholder p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ── FOOTER ── */
+        .page-footer {
+            background: var(--text);
+            padding: 48px 64px;
+            text-align: center;
+            margin-left: 0;
+        }
+
+        .page-footer .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--orange);
+            margin-bottom: 8px;
+        }
+
+        .page-footer p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.82rem;
+            margin: 0;
+        }
+
+        .page-footer .footer-verse {
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            font-size: 0.9rem;
+            margin: 16px 0 8px;
+        }
+
+        /* ── MOBILE TOGGLE ── */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 200;
+            background: var(--orange);
+            border: none;
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 124, 32, 0.35);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 99;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .content {
+                padding: 32px 24px;
+            }
+
+            .hero {
+                padding: 60px 24px 48px;
+            }
+
+            .verse-banner {
+                padding: 32px 24px;
+            }
+
+            .page-footer {
+                padding: 40px 24px;
+            }
+
+            .timeline {
+                flex-direction: column;
+            }
+
+            .timeline-phase {
+                border-right: none;
+                border-bottom: 2px solid var(--border);
+            }
+
+            .timeline-phase:last-child {
+                border-bottom: none;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── PRINT BUTTON ── */
+        .btn-print {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--orange);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .2s, transform .15s, box-shadow .2s;
+            box-shadow: 0 4px 14px rgba(244, 124, 32, 0.35);
+            text-decoration: none;
+        }
+
+        .btn-print:hover {
+            background: var(--orange-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(244, 124, 32, 0.45);
+        }
+
+        .btn-print:active {
+            transform: translateY(0);
+        }
+
+        /* ── GOOGLE DOC BUTTON ── */
+        .btn-gdoc {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.45);
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-gdoc:hover {
+            background: rgba(255, 255, 255, 0.28);
+            transform: translateY(-1px);
+        }
+
+        .btn-gdoc:active {
+            transform: translateY(0);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        .checklist-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .5s ease, transform .5s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media print {
+
+            .sidebar,
+            .menu-toggle,
+            .sidebar-overlay,
+            .hero,
+            .hero-actions,
+            .verse-banner,
+            .checklist-toolbar,
+            .page-footer,
+            .callout.info {
+                display: none !important;
+            }
+
+            .main {
+                margin-left: 0 !important;
+            }
+
+            body {
+                font-size: 13px;
+                background: white;
+            }
+
+            .checklist-table {
+                box-shadow: none;
+                border: 1px solid var(--border);
+            }
+
+            .checklist-table thead tr {
+                background: var(--orange) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .checklist-table thead th {
+                color: white !important;
+            }
+
+            .section:not(#checklist) {
+                display: none !important;
+            }
+
+            #checklist {
+                display: block !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            #checklist h2 {
+                margin-top: 0;
+            }
+
+            .fade-in {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="ministry-name">Turma de Primeira</div>
+            <div class="church-name">PIB Curitiba <br>Campus Campo Comprido</div>
+            <span class="badge">Manual do Voluntário</span>
+        </div>
+
+        <div class="nav-label">Eventos</div>
+        <a class="nav-item" href="#eventos"><span class="nav-icon">🎉</span> <span class="nav-number"></span>
+            Organização de Eventos</a>
+        <a class="nav-item" href="#mesas"><span class="nav-icon">🪑</span> <span class="nav-number"></span> Mesas e
+            Toalhas</a>
+        <a class="nav-item" href="#cozinha"><span class="nav-icon">🍽️</span> <span class="nav-number"></span> Uso da
+            Cozinha</a>
+        <a class="nav-item" href="#som"><span class="nav-icon">🎤</span> <span class="nav-number"></span> Som e
+            Audiovisual</a>
+
+        <div class="nav-label">Compras & Logística</div>
+        <a class="nav-item" href="#lanche"><span class="nav-icon">☕</span> <span class="nav-number"></span> Café e
+            Lanche</a>
+        <a class="nav-item" href="#cantina"><span class="nav-icon">🛒</span> <span class="nav-number"></span>
+            Cantina</a>
+        <a class="nav-item" href="#compras"><span class="nav-icon">📦</span> <span class="nav-number"></span> Pedidos
+            de Compras</a>
+        <a class="nav-item" href="#lembrancas"><span class="nav-icon">🎁</span> <span class="nav-number"></span>
+            Lembrancinhas</a>
+
+        <div class="nav-label">Comunicação</div>
+        <a class="nav-item" href="#divulgacao"><span class="nav-icon">📢</span> <span class="nav-number"></span>
+            Divulgação</a>
+        <a class="nav-item" href="#equipe"><span class="nav-icon">👥</span> <span class="nav-number"></span> Equipe do
+            Evento</a>
+
+        <div class="nav-label">Sistema & Materiais</div>
+        <a class="nav-item" href="#totem"><span class="nav-icon">🖥️</span> <span class="nav-number"></span> Totem</a>
+        <a class="nav-item" href="#etiquetas"><span class="nav-icon">🏷️</span> <span class="nav-number"></span>
+            Etiquetas</a>
+        <a class="nav-item" href="#materiais"><span class="nav-icon">🗂️</span> <span class="nav-number"></span>
+            Materiais</a>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-tag">📖 Documento Oficial · 2026</div>
+            <h1>Manual do<br><em>Voluntário</em></h1>
+            <p class="subtitle">Guia completo para organização, eventos, recursos e funcionamento do ministério
+                infantil.</p>
+            <div class="hero-actions">
+                <a class="btn-gdoc"
+                    href="https://drive.google.com/file/d/1t_NoC3hSa8IxxEUBohSbgI7CRxvyDASf/view?usp=sharing"
+                    target="_blank" rel="noopener">
+                    📄 Abrir Documento Original
+                </a>
+            </div>
+        </div>
+
+        <!-- VERSE -->
+        <div class="verse-banner" id="verse">
+            <div class="verse-bar"></div>
+            <div class="verse-text">
+                "Portanto, meus amados irmãos, sede firmes e constantes, sempre abundantes na obra do Senhor, sabendo
+                que o vosso trabalho não é vão no Senhor."
+                <span class="verse-ref">1 Coríntios 15:58</span>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- SEÇÃO 1 – INTRODUÇÃO -->
+            <section class="section fade-in" id="introducao">
+                <div class="section-header">
+                    <div class="section-num">1</div>
+                    <span class="section-icon">👋</span>
+                    <h2>Introdução</h2>
+                </div>
+                <p>Bem-vindo à equipe da <strong>Turma de Primeira</strong>! É uma alegria ter você servindo neste
+                    ministério. Este manual foi criado para orientar todos os voluntários sobre os processos,
+                    responsabilidades e boas práticas do nosso trabalho com as crianças.</p>
+                <p>Aqui você encontrará informações sobre organização de eventos, uso dos espaços da igreja, pedidos de
+                    compras, funcionamento do totem de cadastro e organização de materiais.</p>
+
+                <div class="card-grid" style="margin-top:24px;">
+                    <div class="info-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-title">Organização</div>
+                        <p>Garantir clareza e eficiência em todas as atividades do ministério.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="card-icon">💬</div>
+                        <div class="card-title">Comunicação</div>
+                        <p>Promover boa comunicação entre voluntários, liderança e secretaria.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="card-icon">🏛️</div>
+                        <div class="card-title">Cuidado</div>
+                        <p>Zelar com responsabilidade pelos recursos e espaços da igreja.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="card-icon">❤️</div>
+                        <div class="card-title">Excelência</div>
+                        <p>Oferecer às crianças um ambiente seguro, acolhedor e preparado com amor.</p>
+                    </div>
+                </div>
+
+                <div class="golden-rule" style="margin-top:28px;">
+                    <div class="rule-title">⭐ Princípio Fundamental</div>
+                    <p>Tudo que usamos deve ser devolvido nas mesmas condições — ou melhores — do que encontramos. Esse
+                        é o nosso padrão de excelência e cuidado com a casa de Deus.</p>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 2 – CHECKLIST -->
+            <section class="section fade-in" id="checklist">
+                <div class="section-header">
+                    <div class="section-num">2</div>
+                    <span class="section-icon">✅</span>
+                    <h2>Checklist Rápido para Eventos</h2>
+                </div>
+                <p>Use esta lista antes, durante e depois de cada evento. Clique nas caixas para marcar cada etapa
+                    concluída!</p>
+
+                <div class="checklist-toolbar">
+                    <button class="btn-print" onclick="printChecklist()">🖨️ Imprimir Checklist</button>
+                </div>
+
+                <table class="checklist-table">
+                    <thead>
+                        <tr>
+                            <th>✓</th>
+                            <th>Etapa</th>
+                            <th>Prazo / Observação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="checklist-body"></tbody>
+                </table>
+
+                <div class="callout info">
+                    <div class="callout-icon">💡</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Dica</div>
+                        <p>Clique nas caixas de seleção para acompanhar o progresso do seu evento. O checklist reinicia
+                            ao recarregar a página.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 3 – EVENTOS -->
+            <section class="section fade-in" id="eventos">
+                <div class="section-header">
+                    <div class="section-num">3</div>
+                    <span class="section-icon">🎉</span>
+                    <h2>Organização de Eventos</h2>
+                </div>
+
+                <div class="subsection">
+                    <h3>Aprovação do Evento</h3>
+                    <p>Todo evento deve ser <strong>aprovado pela liderança do ministério</strong> antes de qualquer
+                        planejamento, divulgação ou reserva. Isso garante alinhamento com o calendário da igreja e os
+                        objetivos do ministério.</p>
+                    <div class="callout warning">
+                        <div class="callout-icon">⚠️</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Atenção</div>
+                            <p>Não comunique datas nem divulgue eventos antes da aprovação formal da liderança.
+                                Reservas, compras e convites só devem ser iniciados após a aprovação.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Reserva de Salas</h3>
+                    <p>A reserva deve ser feita junto à secretária da igreja, <strong>Priscila</strong>.</p>
+                    <div class="deadline">📅 Mínimo 15 dias de antecedência</div>
+                    <p style="margin-top:12px;">Informações obrigatórias na reserva:</p>
+                    <ul class="styled">
+                        <li>Qual sala será utilizada</li>
+                        <li>Horário de entrada</li>
+                        <li>Horário de saída</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Organização Pós-Evento</h3>
+                    <p>A sala deve ser devolvida <strong>exatamente como foi encontrada</strong>. Essa é uma
+                        responsabilidade coletiva da equipe.</p>
+                    <ul class="styled">
+                        <li>Recolher e guardar todos os materiais utilizados</li>
+                        <li>Devolver cadeiras, mesas e equipamentos ao local original</li>
+                        <li>Verificar se não ficou nenhum item esquecido</li>
+                        <li>Apagar as luzes e fechar as portas</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 4 – MESAS E TOALHAS -->
+            <section class="section fade-in" id="mesas">
+                <div class="section-header">
+                    <div class="section-num">4</div>
+                    <span class="section-icon">🪑</span>
+                    <h2>Reserva de Mesas e Toalhas</h2>
+                </div>
+                <p>Quando o evento precisar de mesas ou toalhas de mesa, é obrigatório incluir essa informação no
+                    momento da reserva com a secretária.</p>
+
+                <div class="subsection">
+                    <h3>Reserva de Mesas</h3>
+                    <ul class="styled">
+                        <li>Informar a quantidade exata de mesas necessárias</li>
+                        <li>Especificar o formato de disposição (fileiras, ilhas, em U etc.), se necessário</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Reserva de Toalhas</h3>
+                    <ul class="styled">
+                        <li>Solicitar as toalhas junto com a reserva da sala</li>
+                        <li>Confirmar a quantidade conforme o número de mesas</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Devolução de Mesas e Toalhas</h3>
+                    <ul class="styled">
+                        <li>Desmontar todas as mesas utilizadas</li>
+                        <li>Devolver as mesas no local indicado</li>
+                        <li>Sacudir as toalhas para remover resíduos e migalhas</li>
+                        <li>Colocar as toalhas para lavar no local indicado na reserva</li>
+                    </ul>
+                    <div class="callout orange">
+                        <div class="callout-icon">🔑</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Dica de Ouro</div>
+                            <p>Sempre confirme com a secretária o local correto de devolução. Cada evento pode ter
+                                orientações específicas de logística.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 5 – COZINHA -->
+            <section class="section fade-in" id="cozinha">
+                <div class="section-header">
+                    <div class="section-num">5</div>
+                    <span class="section-icon">🍽️</span>
+                    <h2>Uso da Cozinha</h2>
+                </div>
+                <p>O uso da cozinha requer <strong>reserva prévia junto à secretária</strong>. A reserva deve ser feita
+                    com a mesma antecedência das demais reservas de espaço.</p>
+
+                <div class="subsection">
+                    <h3>Como Reservar a Cozinha</h3>
+                    <ul class="styled">
+                        <li>Entre em contato com a secretária Priscila</li>
+                        <li>Informe a data e o horário de uso</li>
+                        <li>Liste os utensílios que serão utilizados (panelas, talheres, formas etc.)</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Regras de Uso — Obrigatório ao Terminar</h3>
+                    <ul class="styled">
+                        <li>Lavar toda a louça e utensílios utilizados</li>
+                        <li>Guardar os utensílios nos locais corretos</li>
+                        <li>Limpar bancada e fogão</li>
+                        <li>Organizar o espaço exatamente como estava antes</li>
+                    </ul>
+                    <div class="callout success">
+                        <div class="callout-icon">🍽️</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Boas Práticas na Cozinha</div>
+                            <p>Deixe o espaço mais limpo do que você encontrou. Se algo quebrar ou acabar (papel toalha,
+                                detergente), avise a secretária. Não utilize itens de outros ministérios sem
+                                autorização.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 6 – SOM -->
+            <section class="section fade-in" id="som">
+                <div class="section-header">
+                    <div class="section-num">6</div>
+                    <span class="section-icon">🎤</span>
+                    <h2>Uso do Sistema de Som e Audiovisual</h2>
+                </div>
+                <p>Se o evento precisar de microfone, caixas de som, projetor ou qualquer recurso audiovisual, é
+                    necessário comunicar o <strong>Ministério de Som e Adoração</strong> com antecedência.</p>
+
+                <div class="subsection">
+                    <h3>Como Solicitar</h3>
+                    <ul class="styled">
+                        <li>Identifique com clareza quais equipamentos serão necessários</li>
+                        <li>Entre em contato com o líder do Ministério de Som e Adoração</li>
+                        <li>Informe a data, horário e local do evento</li>
+                        <li>Confirme a disponibilidade dos equipamentos e da equipe</li>
+                    </ul>
+                    <div class="callout warning">
+                        <div class="callout-icon">🎤</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Importante</div>
+                            <p>Não opere equipamentos de som sem autorização ou treinamento. Avise com o máximo de
+                                antecedência possível para que a equipe possa se organizar.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 7 – LANCHE -->
+            <section class="section fade-in" id="lanche">
+                <div class="section-header">
+                    <div class="section-num">7</div>
+                    <span class="section-icon">☕</span>
+                    <h2>Café ou Lanche em Eventos</h2>
+                </div>
+                <p>Quando o evento incluir lanche ou café, o pedido deve ser feito através da secretária.</p>
+                <div class="deadline">📅 Mínimo 15 dias de antecedência</div>
+
+                <div class="subsection" style="margin-top:20px;">
+                    <h3>Informações Obrigatórias no Pedido</h3>
+                    <ul class="styled">
+                        <li>Quantidade de itens (número de porções ou pessoas)</li>
+                        <li>Especificação detalhada do que será servido</li>
+                        <li>Data de entrega</li>
+                        <li>Horário de entrega</li>
+                        <li>Nome do responsável por receber o pedido</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <p><strong>"Solicito para o dia 15/06, até as 9h, no salão principal:</strong><br>
+                        — 50 pãezinhos de queijo<br>
+                        — 2 caixas de suco de uva (caixinha 200ml)<br>
+                        — 50 copos descartáveis<br>
+                        <strong>Responsável pelo recebimento: Maria (tel. 99999-9999)"</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 8 – CANTINA -->
+            <section class="section fade-in" id="cantina">
+                <div class="section-header">
+                    <div class="section-num">8</div>
+                    <span class="section-icon">🛒</span>
+                    <h2>Cantina do Ministério Infantil</h2>
+                </div>
+                <p>A cantina é uma importante atividade do ministério. Siga todas as etapas abaixo para que tudo ocorra
+                    sem imprevistos.</p>
+
+                <div class="subsection">
+                    <h3>Planejamento da Cantina</h3>
+                    <ul class="styled">
+                        <li>Definir a data e aprovar com a liderança</li>
+                        <li>Informar a secretária Priscila sobre a data</li>
+                        <li>Fazer pedido de compras com mínimo 15 dias de antecedência</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Pedido de Produtos — Seja Preciso!</h3>
+                    <div class="example-box">
+                        <p><strong>"100 coxinhas de frango com catupiry — tamanho médio"</strong><br>
+                            <strong>"50 latinhas: 25 Coca-Cola e 25 Guaraná"</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Itens de Apoio — Verifique Também</h3>
+                    <ul class="styled">
+                        <li>Copos descartáveis</li>
+                        <li>Guardanapos</li>
+                        <li>Sacolas para embalagem</li>
+                        <li>Troco para vendas (solicitar à secretária com antecedência)</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Reservas Necessárias para a Cantina</h3>
+                    <ul class="styled">
+                        <li>Reservar a cozinha (ver Seção 5)</li>
+                        <li>Reservar as mesas necessárias (ver Seção 4)</li>
+                    </ul>
+                    <div class="callout warning">
+                        <div class="callout-icon">💰</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Troco e Vendas</div>
+                            <p>Solicite o troco à secretária com pelo menos 7 dias de antecedência. Defina os preços
+                                antecipadamente e designe uma pessoa específica para o caixa — isso evita confusões na
+                                hora da venda.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 9 – COMPRAS -->
+            <section class="section fade-in" id="compras">
+                <div class="section-header">
+                    <div class="section-num">9</div>
+                    <span class="section-icon">📦</span>
+                    <h2>Pedidos de Compras</h2>
+                </div>
+                <p>Todo pedido de compra deve ser encaminhado à secretária com todas as informações necessárias.</p>
+                <div class="deadline">📅 Mínimo 15 dias de antecedência</div>
+
+                <div class="subsection" style="margin-top:20px;">
+                    <h3>Informações Obrigatórias</h3>
+                    <ul class="styled">
+                        <li>Nome completo do produto</li>
+                        <li>Quantidade desejada</li>
+                        <li>Descrição clara e detalhada do item</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Informações Complementares (Muito Recomendadas)</h3>
+                    <ul class="styled">
+                        <li>Imagem de referência do produto</li>
+                        <li>Link do produto (ex: Mercado Livre, Amazon)</li>
+                        <li>Valor médio de mercado</li>
+                    </ul>
+                    <div class="callout info">
+                        <div class="callout-icon">🛒</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Por que incluir link e valor?</div>
+                            <p>Com link e foto, quem comprar saberá exatamente o que adquirir. Indicar o valor ajuda no
+                                planejamento financeiro do ministério. Pedidos incompletos ou fora do prazo podem
+                                atrasar a entrega.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 10 – DIVULGAÇÃO -->
+            <section class="section fade-in" id="divulgacao">
+                <div class="section-header">
+                    <div class="section-num">10</div>
+                    <span class="section-icon">📢</span>
+                    <h2>Divulgação de Eventos</h2>
+                </div>
+                <p>A divulgação é de responsabilidade da <strong>equipe de comunicação liderada pela Fran</strong>. O
+                    ministério deve preparar o material e enviá-lo conforme as orientações abaixo.</p>
+
+                <div class="subsection">
+                    <h3>Canais de Divulgação</h3>
+                    <ul class="styled">
+                        <li>Instagram da igreja</li>
+                        <li>Avisos durante o culto</li>
+                        <li>Outros canais definidos pela equipe de comunicação</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Como Enviar o Material</h3>
+                    <ul class="styled">
+                        <li>Entre em contato com a Fran ou sua equipe</li>
+                        <li>Verifique o formato correto para cada canal (tamanho de imagem, texto etc.)</li>
+                        <li>Envie o material com prazo suficiente para edição e aprovação</li>
+                        <li>Confirme o agendamento da publicação</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Fotos do Evento</h3>
+                    <div class="callout info">
+                        <div class="callout-icon">📸</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Cobertura Fotográfica</div>
+                            <p>Se o evento precisar de fotos, a solicitação também deve ser feita à equipe de
+                                comunicação. A equipe irá designar um fotógrafo responsável. Faça a solicitação junto
+                                com o pedido de divulgação, com antecedência.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 11 – LEMBRANCINHAS -->
+            <section class="section fade-in" id="lembrancas">
+                <div class="section-header">
+                    <div class="section-num">11</div>
+                    <span class="section-icon">🎁</span>
+                    <h2>Lembrancinhas para as Crianças</h2>
+                </div>
+                <p>Quando o evento incluir lembrancinhas, o pedido deve ser feito com bastante antecedência.</p>
+                <div class="deadline">🎁 Mínimo 30 dias de antecedência</div>
+
+                <div class="subsection" style="margin-top:20px;">
+                    <h3>Informações do Pedido</h3>
+                    <ul class="styled">
+                        <li>Quantidade (baseada no número esperado de crianças)</li>
+                        <li>Descrição detalhada do item</li>
+                        <li>Referência visual (foto, link ou modelo)</li>
+                    </ul>
+                    <div class="callout orange">
+                        <div class="callout-icon">🎁</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Boas Práticas para Lembrancinhas</div>
+                            <p>Considere sempre um excedente de 10–15% para imprevistos. Verifique se a lembrancinha é
+                                adequada para a faixa etária. Para datas especiais (Páscoa, Natal), planeje com ainda
+                                mais antecedência!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 12 – EQUIPE -->
+            <section class="section fade-in" id="equipe">
+                <div class="section-header">
+                    <div class="section-num">12</div>
+                    <span class="section-icon">👥</span>
+                    <h2>Equipe do Evento</h2>
+                </div>
+                <p>Todo evento deve contar com uma equipe responsável e organizada. A divisão clara de funções é
+                    essencial para que tudo corra bem.</p>
+
+                <div class="timeline">
+                    <div class="timeline-phase">
+                        <div class="timeline-phase-title">⏰ Antes do Evento</div>
+                        <ul>
+                            <li>Conferir lista de materiais</li>
+                            <li>Preparar e organizar o espaço</li>
+                            <li>Verificar reservas confirmadas</li>
+                            <li>Montar mesas e decoração</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-phase">
+                        <div class="timeline-phase-title">🎯 Durante o Evento</div>
+                        <ul>
+                            <li>Receber crianças e famílias</li>
+                            <li>Garantir segurança e organização</li>
+                            <li>Apoiar a logística</li>
+                            <li>Gerenciar imprevistos</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-phase">
+                        <div class="timeline-phase-title">✅ Após o Evento</div>
+                        <ul>
+                            <li>Recolher e guardar materiais</li>
+                            <li>Desmontar e devolver mesas</li>
+                            <li>Organizar o espaço</li>
+                            <li>Conferir itens esquecidos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="callout success">
+                    <div class="callout-icon">👥</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Dica de Liderança</div>
+                        <p>Defina responsáveis específicos para cada etapa antes do evento. Uma reunião rápida de
+                            briefing alinha a equipe e evita esquecimentos. Após o evento, um agradecimento à equipe faz
+                            toda a diferença no engajamento!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 13 – TOTEM -->
+            <section class="section fade-in" id="totem">
+                <div class="section-header">
+                    <div class="section-num">13</div>
+                    <span class="section-icon">🖥️</span>
+                    <h2>Totem do Ministério Infantil</h2>
+                </div>
+                <p>O totem é o sistema de check-in e identificação das crianças. É fundamental que todos os voluntários
+                    saibam operá-lo corretamente.</p>
+
+                <div class="subsection">
+                    <h3>Como Ligar o Totem</h3>
+                    <ul class="styled">
+                        <li>Localize o botão de energia na parte traseira ou lateral do equipamento</li>
+                        <li>Pressione e aguarde a inicialização completa (pode levar alguns minutos)</li>
+                        <li>Confirme que a tela inicial de check-in está visível</li>
+                    </ul>
+                    <div class="video-placeholder">
+                        <div class="vp-icon">▶️</div>
+                        <div class="vp-title">Vídeo: Como ligar o Totem</div>
+                        <p>Solicite o vídeo de treinamento com a liderança do ministério.</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Como Trocar a Etiqueta</h3>
+                    <ul class="styled">
+                        <li>Abra o compartimento de etiquetas conforme instruções do equipamento</li>
+                        <li>Insira o novo rolo de etiqueta conforme o vídeo de treinamento</li>
+                        <li>Faça um teste de impressão para confirmar o funcionamento</li>
+                    </ul>
+                    <div class="video-placeholder">
+                        <div class="vp-icon">▶️</div>
+                        <div class="vp-title">Vídeo: Como trocar a etiqueta</div>
+                        <p>Solicite o vídeo de treinamento com a liderança do ministério.</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>O Que Fazer se o Totem Não Funcionar</h3>
+                    <ol class="styled">
+                        <li>Reinicie o equipamento (desligue e ligue novamente)</li>
+                        <li>Se o problema persistir, avise imediatamente a liderança</li>
+                        <li>Registre as crianças manualmente enquanto o problema é resolvido</li>
+                        <li>Comunique o Setor de Tecnologia lá do Batel que dá suporte aos campus, se necessário</li>
+                    </ol>
+                    <div class="video-placeholder">
+                        <div class="vp-icon">▶️</div>
+                        <div class="vp-title">Vídeo: Resolução de Problemas no Totem</div>
+                        <p>Solicite o vídeo de treinamento com a liderança do ministério.</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Cadastro de Novas Crianças</h3>
+                    <ul class="styled">
+                        <li>Acesse o menu de cadastro no painel administrativo do totem</li>
+                        <li>Preencha: nome completo, data de nascimento, responsável e contato</li>
+                        <li>Tire uma foto da criança para vinculação ao cadastro (se o sistema permitir)</li>
+                        <li>Confirme o cadastro e gere a primeira etiqueta de identificação</li>
+                        <li>Entregue uma cópia da etiqueta ao responsável</li>
+                    </ul>
+                    <div class="video-placeholder">
+                        <div class="vp-icon">▶️</div>
+                        <div class="vp-title">Vídeo: Cadastro de Novas Crianças</div>
+                        <p>Solicite o vídeo de treinamento antes de realizar cadastros de forma independente.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 14 – ETIQUETAS -->
+            <section class="section fade-in" id="etiquetas">
+                <div class="section-header">
+                    <div class="section-num">14</div>
+                    <span class="section-icon">🏷️</span>
+                    <h2>Falta de Etiquetas</h2>
+                </div>
+                <p>As etiquetas são essenciais para o check-in das crianças. Quando perceber que o estoque está baixo,
+                    siga este protocolo:</p>
+
+                <table class="checklist-table" style="margin-top:16px;">
+                    <thead>
+                        <tr>
+                            <th>Passo</th>
+                            <th>Ação</th>
+                            <th>Observação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span
+                                    style="background:var(--orange);color:white;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;">1</span>
+                            </td>
+                            <td><span class="step-label">Verificar no armário de materiais do ministério</span></td>
+                            <td><span class="step-timing">Primeiro passo</span></td>
+                        </tr>
+                        <tr>
+                            <td><span
+                                    style="background:var(--orange);color:white;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;">2</span>
+                            </td>
+                            <td><span class="step-label">Se não houver estoque, avisar a liderança imediatamente</span>
+                            </td>
+                            <td><span class="step-timing">Não espere o dia do culto</span></td>
+                        </tr>
+                        <tr>
+                            <td><span
+                                    style="background:var(--orange);color:white;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;">3</span>
+                            </td>
+                            <td><span class="step-label">A liderança solicitará à secretária Priscila</span>
+                                <div class="step-note">Priscila abrirá a solicitação</div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><span
+                                    style="background:var(--orange);color:white;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;">4</span>
+                            </td>
+                            <td><span class="step-label">Secretária solicita ao Setor de Tecnologia</span>
+                                <div class="step-note">Setor de Tecnologia lá do Batel que dá suporte aos campus</div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout warning" style="margin-top:16px;">
+                    <div class="callout-icon">⚠️</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Não Espere Acabar!</div>
+                        <p>Ao perceber que o estoque está baixo, já avise. Mantenha sempre pelo menos um rolo extra no
+                            armário como estoque de segurança.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 15 – MATERIAIS -->
+            <section class="section fade-in" id="materiais">
+                <div class="section-header">
+                    <div class="section-num">15</div>
+                    <span class="section-icon">🗂️</span>
+                    <h2>Materiais do Ministério Infantil</h2>
+                </div>
+                <p>Todos os materiais do ministério têm um local definido. Conhecer e respeitar essa organização é
+                    fundamental para que tudo funcione bem.</p>
+
+                <div class="subsection">
+                    <h3>Localização dos Materiais</h3>
+                    <ul class="styled">
+                        <li>Materiais de uso geral estão nos armários indicados pela liderança</li>
+                        <li>Existe uma área exclusiva da supervisão — não acesse sem autorização</li>
+                        <li>Um vídeo com a localização de cada armário será disponibilizado pela liderança</li>
+                    </ul>
+                    <div class="video-placeholder">
+                        <div class="vp-icon">▶️</div>
+                        <div class="vp-title">Vídeo: Onde ficam os materiais</div>
+                        <p>Assista ao vídeo antes de acessar os materiais pela primeira vez.</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Boas Práticas com os Materiais</h3>
+                    <ul class="styled">
+                        <li>Antes de pegar qualquer material, verifique se pertence ao ministério infantil</li>
+                        <li>Nunca pegue materiais de outros ministérios sem autorização</li>
+                        <li>Se um material acabar ou quebrar, avise imediatamente a liderança</li>
+                        <li>Mantenha os armários organizados após o uso</li>
+                    </ul>
+                </div>
+
+                <div class="golden-rule">
+                    <div class="rule-title">📦 REGRA DE OURO DOS MATERIAIS</div>
+                    <p>Todo material utilizado deve ser devolvido exatamente no mesmo lugar onde foi
+                        encontrado.<br><br>Isso vale para: tesouras, fitas, papéis, canetas, decorações, toalhas,
+                        utensílios de cozinha e qualquer outro item do ministério.<br><br><strong
+                            style="color:rgba(255,255,255,0.9)">Se usou → devolveu. Simples assim.</strong></p>
+                </div>
+            </section>
+
+            <!-- ENCERRAMENTO -->
+            <section class="section fade-in" style="text-align:center; padding:40px 0;">
+                <div style="font-size:2.5rem; margin-bottom:16px;">✦ ✦ ✦</div>
+                <h2
+                    style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--orange-dark); margin-bottom:12px;">
+                    Obrigado por fazer parte da<br>Turma de Primeira!</h2>
+                <p style="font-size:1.05rem; max-width:480px; margin:0 auto 16px; color:var(--text-soft);">Cada detalhe
+                    que você cuida faz diferença na vida de uma criança. Servir com excelência é a nossa oferta a Deus.
+                </p>
+                <p style="font-style:italic; color:var(--text-muted); font-size:0.9rem;">"Porque onde estiver o vosso
+                    tesouro, aí estará também o vosso coração." — Mateus 6:21</p>
+            </section>
+
+        </div><!-- /content -->
+
+        <!-- FOOTER -->
+        <footer class="page-footer">
+            <div class="footer-logo">Turma de Primeira</div>
+            <p class="footer-verse">"...sempre abundantes na obra do Senhor..." — 1 Coríntios 15:58</p>
+            <p>PIB Curitiba · Campus Campo Comprido &nbsp;·&nbsp; Manual do Voluntário 2026</p>
+        </footer>
+
+    </main>
+
+    <script>
+        function printChecklist() {
+            window.print();
+        }
+
+        // Checklist data
+        const checklistItems = [
+            ["Aprovar o evento com a liderança", "Antes de qualquer divulgação"],
+            ["Verificar disponibilidade de sala com a Priscila", "Mín. 15 dias de antecedência"],
+            ["Fazer a reserva formal da sala", "Informar sala, entrada e saída"],
+            ["Reservar mesas e/ou toalhas (se necessário)", "Informar quantidade"],
+            ["Reservar a cozinha (se necessário)", "Informar utensílios a utilizar"],
+            ["Solicitar compras ou lanche", "Mín. 15 dias de antecedência"],
+            ["Solicitar lembrancinhas (se houver)", "Mín. 30 dias de antecedência"],
+            ["Organizar a equipe do evento", "Definir funções: antes, durante e após"],
+            ["Solicitar divulgação (Instagram / avisos)", "Enviar material para a equipe da Fran"],
+            ["Solicitar fotografia do evento", "Solicitar à equipe de comunicação"],
+            ["Avisar ministério de som (se necessário)", "Com antecedência suficiente"],
+            ["Realizar o evento", ""],
+            ["Organizar e devolver o espaço como encontrado", "Lavar louça, dobrar toalhas, guardar tudo"]
+        ];
+
+        const tbody = document.getElementById('checklist-body');
+        checklistItems.forEach((item, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+    <td><div class="check-box" id="cb-${i}" onclick="toggleCheck(${i})"></div></td>
+    <td>
+      <div class="step-label" id="lbl-${i}">${item[0]}</div>
+      ${item[1] ? `<div class="step-note">${item[1]}</div>` : ''}
+    </td>
+    <td>${item[1] ? `<span class="step-timing">${item[1]}</span>` : ''}</td>
+  `;
+            tbody.appendChild(tr);
+        });
+
+        function toggleCheck(i) {
+            const cb = document.getElementById(`cb-${i}`);
+            const lbl = document.getElementById(`lbl-${i}`);
+            cb.classList.toggle('checked');
+            lbl.style.textDecoration = cb.classList.contains('checked') ? 'line-through' : '';
+            lbl.style.color = cb.classList.contains('checked') ? 'var(--text-muted)' : '';
+        }
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('open');
+        }
+
+        // Active nav highlight
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section, .verse-banner');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navItems.forEach(n => {
+                        n.classList.toggle('active', n.getAttribute('href') === '#' + id);
+                    });
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+
+        // Fade-in animation
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+    </script>
+</body>
+
+</html>
