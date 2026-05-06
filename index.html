@@ -1121,16 +1121,42 @@
             border-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Scroll animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity .5s ease, transform .5s ease;
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25D366;
+            color: white !important;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
 
-        .fade-in.visible {
-            opacity: 1;
-            transform: none;
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        /* Floor Plans */
+        .floor-plan {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-top: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .floor-plan:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
 
         @media print {
@@ -1163,10 +1189,6 @@
                 print-color-adjust: exact;
             }
 
-            .fade-in {
-                opacity: 1 !important;
-                transform: none !important;
-            }
 
             .section {
                 page-break-inside: auto;
@@ -1255,7 +1277,8 @@
         <a class="nav-item" href="#equipe"><span class="nav-icon">👥</span> Equipe do Evento</a>
 
         <div class="nav-label">Finalização</div>
-        <a class="nav-item" href="#observacoes"><span class="nav-icon">📝</span> Observações Finais</a>
+        <a class="nav-item" href="#contatos"><span class="nav-icon">📞</span> Contatos</a>
+        <a class="nav-item" href="#organograma"><span class="nav-icon">📊</span> Organograma</a>
     </aside>
 
     <!-- MAIN -->
@@ -1288,7 +1311,7 @@
         <div class="content">
 
             <!-- SEÇÃO 1 – INTRODUÇÃO -->
-            <section class="section fade-in" id="introducao">
+            <section class="section" id="introducao">
                 <div class="section-header">
                     <div class="section-num" style="background:var(--text-muted);">i</div>
                     <span class="section-icon">👋</span>
@@ -1330,7 +1353,7 @@
                 </div>
             </section>
             <!-- SEÇÃO 1 – NORMAS E LEGISLAÇÃO -->
-            <section class="section fade-in" id="normas">
+            <section class="section" id="normas">
                 <div class="section-header">
                     <div class="section-num">1</div>
                     <span class="section-icon">⚖️</span>
@@ -1386,7 +1409,7 @@
             </section>
 
             <!-- SEÇÃO 2 – PROCEDIMENTOS -->
-            <section class="section fade-in" id="procedimentos">
+            <section class="section" id="procedimentos">
                 <div class="section-header">
                     <div class="section-num">2</div>
                     <span class="section-icon">📋</span>
@@ -1459,7 +1482,7 @@
             </section>
 
             <!-- SEÇÃO 3 – NOSSOS ESPAÇOS -->
-            <section class="section fade-in" id="espacos">
+            <section class="section" id="espacos">
                 <div class="section-header">
                     <div class="section-num">3</div>
                     <span class="section-icon">📍</span>
@@ -1476,6 +1499,7 @@
                             <li style="background:rgba(255,255,255,0.5); border:1px solid var(--orange-pale); padding: 10px 14px;">Sala de Amamentação</li>
                             <li style="background:rgba(255,255,255,0.5); border:1px solid var(--orange-pale); padding: 10px 14px;">Sala de Materiais e Apoio</li>
                         </ul>
+                        <img src="img/anexoA.png" alt="Planta Baixa Anexo A" class="floor-plan">
                     </div>
                     <div class="info-card">
                         <div class="card-title" style="color:var(--orange-dark); font-size:1.1rem; border-bottom:2px solid var(--orange-pale); padding-bottom:8px; margin-bottom:12px;">🏢 Anexo B</div>
@@ -1484,12 +1508,13 @@
                             <li style="background:rgba(255,255,255,0.5); border:1px solid var(--orange-pale); padding: 10px 14px;">Sala Calma AME+ KIDS</li>
                             <li style="background:rgba(255,255,255,0.5); border:1px solid var(--orange-pale); padding: 10px 14px;">Ensaio CCA KIDS / Discipulado Infantil</li>
                         </ul>
+                        <img src="img/anexoB.png" alt="Planta Baixa Anexo B" class="floor-plan">
                     </div>
                 </div>
             </section>
 
             <!-- SEÇÃO 4 – CULTO -->
-            <section class="section fade-in" id="culto">
+            <section class="section" id="culto">
                 <div class="section-header">
                     <div class="section-num">4</div>
                     <span class="section-icon">⛪</span>
@@ -1719,7 +1744,7 @@
             </section>
 
             <!-- SEÇÃO 5 – SISTEMA & MATERIAIS -->
-            <section class="section fade-in" id="totem">
+            <section class="section" id="totem">
                 <div class="section-header">
                     <div class="section-num">5.1</div>
                     <span class="section-icon">🖥️</span>
@@ -1767,7 +1792,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="etiquetas">
+            <section class="section" id="etiquetas">
                 <div class="section-header">
                     <div class="section-num">5.2</div>
                     <span class="section-icon">🏷️</span>
@@ -1831,7 +1856,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="materiais">
+            <section class="section" id="materiais">
                 <div class="section-header">
                     <div class="section-num">5.3</div>
                     <span class="section-icon">🗂️</span>
@@ -1868,7 +1893,7 @@
             </section>
 
             <!-- SEÇÃO 6 – EVENTOS -->
-            <section class="section fade-in" id="eventos">
+            <section class="section" id="eventos">
                 <div class="section-header">
                     <div class="section-num">6.1</div>
                     <span class="section-icon">🎉</span>
@@ -1915,7 +1940,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="mesas">
+            <section class="section" id="mesas">
                 <div class="section-header">
                     <div class="section-num">6.2</div>
                     <span class="section-icon">🪑</span>
@@ -1959,7 +1984,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="cozinha">
+            <section class="section" id="cozinha">
                 <div class="section-header">
                     <div class="section-num">6.3</div>
                     <span class="section-icon">🍽️</span>
@@ -1997,7 +2022,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="som">
+            <section class="section" id="som">
                 <div class="section-header">
                     <div class="section-num">6.4</div>
                     <span class="section-icon">🎤</span>
@@ -2026,7 +2051,7 @@
             </section>
 
             <!-- SEÇÃO 6.5 – CHECKLIST -->
-            <section class="section fade-in" id="checklist">
+            <section class="section" id="checklist">
                 <div class="section-header">
                     <div class="section-num">6.5</div>
                     <span class="section-icon">✅</span>
@@ -2061,7 +2086,7 @@
             </section>
 
             <!-- SEÇÃO 7 – COMPRAS & LOGÍSTICA -->
-            <section class="section fade-in" id="lanche">
+            <section class="section" id="lanche">
                 <div class="section-header">
                     <div class="section-num">7.1</div>
                     <span class="section-icon">☕</span>
@@ -2091,7 +2116,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="cantina">
+            <section class="section" id="cantina">
                 <div class="section-header">
                     <div class="section-num">7.2</div>
                     <span class="section-icon">🛒</span>
@@ -2146,7 +2171,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="compras">
+            <section class="section" id="compras">
                 <div class="section-header">
                     <div class="section-num">7.3</div>
                     <span class="section-icon">📦</span>
@@ -2183,7 +2208,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="lembrancas">
+            <section class="section" id="lembrancas">
                 <div class="section-header">
                     <div class="section-num">7.4</div>
                     <span class="section-icon">🎁</span>
@@ -2212,7 +2237,7 @@
             </section>
 
             <!-- SEÇÃO 8 – COMUNICAÇÃO -->
-            <section class="section fade-in" id="divulgacao">
+            <section class="section" id="divulgacao">
                 <div class="section-header">
                     <div class="section-num">8.1</div>
                     <span class="section-icon">📢</span>
@@ -2254,7 +2279,7 @@
                 </div>
             </section>
 
-            <section class="section fade-in" id="equipe">
+            <section class="section" id="equipe">
                 <div class="section-header">
                     <div class="section-num">8.2</div>
                     <span class="section-icon">👥</span>
@@ -2303,27 +2328,64 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 9 – OBSERVAÇÕES FINAIS -->
-            <section class="section fade-in" id="observacoes">
+            <!-- SEÇÃO 9 – CONTATOS -->
+            <section class="section" id="contatos">
                 <div class="section-header">
                     <div class="section-num">9</div>
-                    <span class="section-icon">📝</span>
-                    <h2>Observações Finais</h2>
+                    <span class="section-icon">📞</span>
+                    <h2>Contatos</h2>
                 </div>
-                
-                <div class="subsection" id="contatos">
-                    <h3>9.1 Contatos</h3>
-                    <p>Conteúdo em breve.</p>
-                </div>
+                <p>Precisa de ajuda ou informações? Entre em contato com os responsáveis:</p>
 
-                <div class="subsection" id="organograma">
-                    <h3>9.2 Organograma</h3>
-                    <p>Conteúdo em breve.</p>
+                <div class="card-grid" style="margin-top:24px;">
+                    <!-- Ministério Infantil -->
+                    <div class="info-card">
+                        <div class="card-icon">🧒</div>
+                        <div class="card-title">Ministério Infantil</div>
+                        <p style="margin-bottom:8px;">Atendimento referente ao ministério infantil.</p>
+                        <p><strong>(41) 99982-4484</strong></p>
+                        <a href="https://wa.me/5541999824484" target="_blank" class="btn-whatsapp">
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+
+                    <!-- Base Campus -->
+                    <div class="info-card">
+                        <div class="card-icon">🏢</div>
+                        <div class="card-title">Base Campus</div>
+                        <p style="margin-bottom:8px;">Ação social, projetos e atendimentos sociais.</p>
+                        <p><strong>(41) 99129-8050</strong></p>
+                        <a href="https://wa.me/5541991298050" target="_blank" class="btn-whatsapp">
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+
+                    <!-- Secretaria -->
+                    <div class="info-card">
+                        <div class="card-icon">📅</div>
+                        <div class="card-title">Secretaria</div>
+                        <p style="margin-bottom:8px;">Informações sobre o Campus, reservas e agendamentos.</p>
+                        <p><strong>(41) 99236-9035</strong></p>
+                        <a href="https://wa.me/5541992369035" target="_blank" class="btn-whatsapp">
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
                 </div>
             </section>
 
+            <!-- SEÇÃO 10 – ORGANOGRAMA -->
+            <section class="section" id="organograma">
+                <div class="section-header">
+                    <div class="section-num">10</div>
+                    <span class="section-icon">📊</span>
+                    <h2>Organograma</h2>
+                </div>
+                <p>Confira abaixo a estrutura organizacional do nosso ministério:</p>
+                <img src="img/organograma.png" alt="Organograma do Ministério" class="floor-plan">
+            </section>
+
             <!-- ENCERRAMENTO -->
-            <section class="section fade-in" style="text-align:center; padding:40px 0;">
+            <section class="section" style="text-align:center; padding:40px 0;">
                 <div style="font-size:2.5rem; margin-bottom:16px;">✦ ✦ ✦</div>
                 <h2
                     style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--orange-dark); margin-bottom:12px;">
@@ -2420,17 +2482,6 @@
 
         document.querySelectorAll('[id]').forEach(el => observer.observe(el));
 
-        // Fade-in animation
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    fadeObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
     </script>
 </body>
 
