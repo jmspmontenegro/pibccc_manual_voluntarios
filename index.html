@@ -1153,11 +1153,88 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
         .floor-plan:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
         }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            box-sizing: border-box;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .image-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2001;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                max-width: 100%;
+                max-height: auto;
+            }
+            .modal-close {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 30px;
+            }
+        }
+
 
         @media print {
             .sidebar,
@@ -1277,8 +1354,9 @@
         <a class="nav-item" href="#equipe"><span class="nav-icon">👥</span> Equipe do Evento</a>
 
         <div class="nav-label">Finalização</div>
-        <a class="nav-item" href="#contatos"><span class="nav-icon">📞</span> Contatos</a>
+        <a class="nav-item" href="#calendario"><span class="nav-icon">📅</span> Calendário</a>
         <a class="nav-item" href="#organograma"><span class="nav-icon">📊</span> Organograma</a>
+        <a class="nav-item" href="#contatos"><span class="nav-icon">📞</span> Contatos</a>
     </aside>
 
     <!-- MAIN -->
@@ -2328,10 +2406,32 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 9 – CONTATOS -->
-            <section class="section" id="contatos">
+            <!-- SEÇÃO 9 – CALENDÁRIO -->
+            <section class="section" id="calendario">
                 <div class="section-header">
                     <div class="section-num">9</div>
+                    <span class="section-icon">📅</span>
+                    <h2>Calendário de Eventos</h2>
+                </div>
+                <p>Mantenha-se atualizado com as datas e horários de todas as nossas atividades e treinamentos:</p>
+                <img src="img/calendario.png" alt="Calendário de Eventos" class="floor-plan">
+            </section>
+
+            <!-- SEÇÃO 10 – ORGANOGRAMA -->
+            <section class="section" id="organograma">
+                <div class="section-header">
+                    <div class="section-num">10</div>
+                    <span class="section-icon">📊</span>
+                    <h2>Organograma</h2>
+                </div>
+                <p>Confira abaixo a estrutura organizacional do nosso ministério:</p>
+                <img src="img/organograma.png" alt="Organograma do Ministério" class="floor-plan">
+            </section>
+
+            <!-- SEÇÃO 11 – CONTATOS -->
+            <section class="section" id="contatos">
+                <div class="section-header">
+                    <div class="section-num">11</div>
                     <span class="section-icon">📞</span>
                     <h2>Contatos</h2>
                 </div>
@@ -2373,17 +2473,6 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 10 – ORGANOGRAMA -->
-            <section class="section" id="organograma">
-                <div class="section-header">
-                    <div class="section-num">10</div>
-                    <span class="section-icon">📊</span>
-                    <h2>Organograma</h2>
-                </div>
-                <p>Confira abaixo a estrutura organizacional do nosso ministério:</p>
-                <img src="img/organograma.png" alt="Organograma do Ministério" class="floor-plan">
-            </section>
-
             <!-- ENCERRAMENTO -->
             <section class="section" style="text-align:center; padding:40px 0;">
                 <div style="font-size:2.5rem; margin-bottom:16px;">✦ ✦ ✦</div>
@@ -2408,6 +2497,12 @@
 
     </main>
 
+    <!-- Modal Container -->
+    <div id="imageModal" class="image-modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
     <script>
         function printChecklist() {
             window.print();
@@ -2431,31 +2526,37 @@
         ];
 
         const tbody = document.getElementById('checklist-body');
-        checklistItems.forEach((item, i) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-    <td><div class="check-box" id="cb-${i}" onclick="toggleCheck(${i})"></div></td>
-    <td>
-      <div class="step-label" id="lbl-${i}">${item[0]}</div>
-      ${item[1] ? `<div class="step-note">${item[1]}</div>` : ''}
-    </td>
-    <td>${item[1] ? `<span class="step-timing">${item[1]}</span>` : ''}</td>
-  `;
-            tbody.appendChild(tr);
-        });
+        if (tbody) {
+            checklistItems.forEach((item, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><div class="check-box" id="cb-${i}" onclick="toggleCheck(${i})"></div></td>
+                    <td>
+                      <div class="step-label" id="lbl-${i}">${item[0]}</div>
+                      ${item[1] ? `<div class="step-note">${item[1]}</div>` : ''}
+                    </td>
+                    <td>${item[1] ? `<span class="step-timing">${item[1]}</span>` : ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
         function toggleCheck(i) {
             const cb = document.getElementById(`cb-${i}`);
             const lbl = document.getElementById(`lbl-${i}`);
-            cb.classList.toggle('checked');
-            lbl.style.textDecoration = cb.classList.contains('checked') ? 'line-through' : '';
-            lbl.style.color = cb.classList.contains('checked') ? 'var(--text-muted)' : '';
+            if (cb && lbl) {
+                cb.classList.toggle('checked');
+                lbl.style.textDecoration = cb.classList.contains('checked') ? 'line-through' : '';
+                lbl.style.color = cb.classList.contains('checked') ? 'var(--text-muted)' : '';
+            }
         }
 
         // Sidebar toggle
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('open');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if (sidebar) sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('open');
         }
 
         // Print functionality
@@ -2482,7 +2583,31 @@
 
         document.querySelectorAll('[id]').forEach(el => observer.observe(el));
 
+        // Image Modal Logic
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        const floorPlans = document.querySelectorAll('.floor-plan');
+
+        if (modal && modalImg) {
+            floorPlans.forEach(img => {
+                img.onclick = function() {
+                    modal.classList.add('active');
+                    modalImg.src = this.src;
+                    document.body.style.overflow = 'hidden'; // Prevent scroll
+                }
+            });
+
+            window.closeModal = function() {
+                modal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scroll
+            }
+
+            modal.onclick = function(e) {
+                if (e.target !== modalImg) {
+                    closeModal();
+                }
+            }
+        }
     </script>
 </body>
-
-</html>
+</html>
