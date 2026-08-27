@@ -1,6 +1,6 @@
 # Manual do Voluntário — Start
 
-Este é o repositório do **Manual do Voluntário** da Start (Ministério Infantil da PIB Curitiba - Campus Campo Comprido). O projeto consiste em uma aplicação web estática (Single Page Application) projetada para ser um guia completo, interativo e acessível para todos os voluntários.
+Este é o repositório do **Manual do Voluntário** do Start (Ministério Infantil da PIB Curitiba - Campus Campo Comprido). O projeto consiste em uma aplicação web estática (Single Page Application) projetada para ser um guia completo, interativo e acessível para todos os voluntários.
 
 ## 🚀 Funcionalidades
 
