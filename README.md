@@ -1,6 +1,6 @@
-# Manual do Voluntário — Turma de Primeira
+# Manual do Voluntário — Start
 
-Este é o repositório do **Manual do Voluntário** da Turma de Primeira (Ministério Infantil da PIB Curitiba - Campus Campo Comprido). O projeto consiste em uma aplicação web estática (Single Page Application) projetada para ser um guia completo, interativo e acessível para todos os voluntários.
+Este é o repositório do **Manual do Voluntário** da Start (Ministério Infantil da PIB Curitiba - Campus Campo Comprido). O projeto consiste em uma aplicação web estática (Single Page Application) projetada para ser um guia completo, interativo e acessível para todos os voluntários.
 
 ## 🚀 Funcionalidades
 
@@ -28,4 +28,4 @@ Este é o repositório do **Manual do Voluntário** da Turma de Primeira (Minist
 Basta abrir o arquivo `index.html` em qualquer navegador moderno. Para gerar o PDF, utilize o botão **"Download em PDF"** no topo da página ou a função de impressão do navegador (Ctrl+P).
 
 ---
-*Este manual é um documento oficial do Ministério Infantil Turma de Primeira - PIB Curitiba Campus Campo Comprido.*
+*Este manual é um documento oficial do Ministério Infantil Start - PIB Curitiba Campus Campo Comprido.*
