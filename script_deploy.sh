@@ -18,6 +18,15 @@ if [ -z "$DESCRIPTION" ]; then
     exit 1
 fi
 
+# Valida o build do Next.js antes de subir (evita quebrar produção no Vercel)
+# Nota: chama o binário via node diretamente (não "npm run build") porque o
+# wrapper npm.cmd do Windows não suporta caminho UNC (\\wsl.localhost\...)
+echo "Validando build do Next.js..."
+if ! node ./node_modules/next/dist/bin/next build; then
+    echo "Erro: build falhou. Deploy cancelado."
+    exit 1
+fi
+
 # Gera o prefixo vYYYY.MM.DD-HH.ii
 # Nota: %M é o minuto (ii no formato solicitado)
 DATETIME=$(date +"%Y.%m.%d-%H.%M")
