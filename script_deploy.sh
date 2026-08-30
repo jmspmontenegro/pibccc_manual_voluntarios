@@ -43,11 +43,12 @@ git add .
 
 if git commit -m "$COMMIT_MESSAGE"; then
     echo "Commit realizado com sucesso."
-    echo "Enviando para origin main..."
-    git push origin main
 else
-    echo "Erro: Falha ao realizar o commit (talvez não haja alterações?)."
+    echo "Nada novo pra commitar (working tree já estava limpa) - seguindo pro push mesmo assim."
 fi
+
+echo "Enviando para origin main..."
+git push origin main
 
 echo "----------------------------------------"
 echo "Processo finalizado."
