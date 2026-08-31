@@ -1,20 +1,12 @@
 import { redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRolePermissions, can } from "@/lib/permissions";
-import { TeamBadge } from "@/components/team-badge";
+import { Badge } from "@/components/ui/badge";
 import { TeamFormDialog } from "./team-form-dialog";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { ListToolbar } from "@/components/crud/list-toolbar";
 import { deleteTeam } from "./actions";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 export default async function EquipesPage({
   searchParams,
@@ -97,59 +89,58 @@ export default async function EquipesPage({
         filename="equipes"
       />
 
-      <div className="print-area rounded-xl border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Equipe</TableHead>
-              <TableHead>Supervisor</TableHead>
-              <TableHead>Membros</TableHead>
-              {(canEdit || canDelete) && <TableHead className="text-right">Ações</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((t) => (
-              <TableRow key={t.id}>
-                <TableCell>
-                  <TeamBadge name={t.name} color={t.color} />
-                </TableCell>
-                <TableCell>{t.supervisorName}</TableCell>
-                <TableCell>{t.members}</TableCell>
-                {(canEdit || canDelete) && (
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      {canEdit && (
-                        <TeamFormDialog
-                          team={{
-                            id: t.id,
-                            name: t.name,
-                            supervisor_id: t.supervisor_id,
-                            color: t.color,
-                          }}
-                          supervisors={supervisors ?? []}
-                        />
-                      )}
-                      {canDelete && (
-                        <DeleteButton
-                          id={t.id}
-                          action={deleteTeam}
-                          confirmMessage={`Excluir a equipe "${t.name}"?`}
-                        />
-                      )}
-                    </div>
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-            {rows.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
-                  Nenhuma equipe cadastrada.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+      <div className="print-area flex flex-col gap-3">
+        {rows.map((t) => (
+          <div
+            key={t.id}
+            className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span
+                  className="flex size-11 items-center justify-center rounded-full text-white"
+                  style={{ backgroundColor: t.color }}
+                >
+                  <Users className="size-5" />
+                </span>
+                <div>
+                  <p className="font-semibold leading-tight">{t.name}</p>
+                  <p className="text-xs text-muted-foreground">Supervisor: {t.supervisorName}</p>
+                </div>
+              </div>
+              {(canEdit || canDelete) && (
+                <div className="flex gap-1">
+                  {canEdit && (
+                    <TeamFormDialog
+                      team={{
+                        id: t.id,
+                        name: t.name,
+                        supervisor_id: t.supervisor_id,
+                        color: t.color,
+                      }}
+                      supervisors={supervisors ?? []}
+                    />
+                  )}
+                  {canDelete && (
+                    <DeleteButton
+                      id={t.id}
+                      action={deleteTeam}
+                      confirmMessage={`Excluir a equipe "${t.name}"?`}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+            <Badge variant="secondary" className="w-fit">
+              {t.members} {t.members === 1 ? "membro" : "membros"}
+            </Badge>
+          </div>
+        ))}
+        {rows.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            Nenhuma equipe cadastrada.
+          </p>
+        )}
       </div>
     </main>
   );

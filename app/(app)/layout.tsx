@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BottomNav } from "./bottom-nav";
+import { TermGate } from "./term-gate";
+import { CURRENT_TERM_VERSION } from "@/lib/terms";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -9,6 +11,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+
+  const { data: acceptance } = await supabase
+    .from("term_acceptances")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("term_version", CURRENT_TERM_VERSION)
+    .maybeSingle();
+
+  if (!acceptance) return <TermGate />;
 
   return (
     <div className="print-scope">

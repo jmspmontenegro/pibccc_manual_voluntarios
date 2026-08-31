@@ -15,7 +15,7 @@ export default async function PessoasPage() {
   const { data: profiles } = await supabase
     .from("profiles")
     .select("id, full_name, email, role, status, team:teams!profiles_team_id_fkey(name, color)")
-    .eq("status", "active")
+    .eq("status", "approved")
     .order("full_name");
 
   return (

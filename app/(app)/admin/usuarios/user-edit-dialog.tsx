@@ -25,6 +25,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { updateUser, resetPassword } from "./actions";
 
 type Team = { id: string; name: string };
+type Room = { id: string; name: string };
+type SemeandoTempoRecord = { id: string; entered_at: string; note: string | null };
 
 type Profile = {
   id: string;
@@ -35,7 +37,15 @@ type Profile = {
   role: string;
   status: string;
   team_id: string | null;
+  preferred_room_id: string | null;
+  birth_date: string | null;
 };
+
+const STATUS_OPTIONS = [
+  { value: "pending", label: "Pendente" },
+  { value: "approved", label: "Aprovado" },
+  { value: "blocked", label: "Bloqueado" },
+];
 
 const ROLE_OPTIONS = [
   { value: "volunteer", label: "Voluntário" },
@@ -44,7 +54,17 @@ const ROLE_OPTIONS = [
   { value: "admin", label: "Administrador" },
 ];
 
-export function UserEditDialog({ profile, teams }: { profile: Profile; teams: Team[] }) {
+export function UserEditDialog({
+  profile,
+  teams,
+  rooms,
+  semeandoTempoHistory,
+}: {
+  profile: Profile;
+  teams: Team[];
+  rooms: Room[];
+  semeandoTempoHistory: SemeandoTempoRecord[];
+}) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState<string | null>(null);
@@ -143,8 +163,37 @@ export function UserEditDialog({ profile, teams }: { profile: Profile; teams: Te
           </div>
 
           <div className="flex flex-col gap-1.5">
+            <Label>Data de nascimento</Label>
+            <Input name="birth_date" type="date" defaultValue={profile.birth_date ?? ""} />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Sala preferencial</Label>
+            <Select
+              name="preferred_room_id"
+              defaultValue={profile.preferred_room_id ?? undefined}
+              items={Object.fromEntries(rooms.map((r) => [r.id, r.name]))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sem preferência" />
+              </SelectTrigger>
+              <SelectContent>
+                {rooms.map((r) => (
+                  <SelectItem key={r.id} value={r.id}>
+                    {r.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <Label>Equipe</Label>
-            <Select name="team_id" defaultValue={profile.team_id ?? undefined}>
+            <Select
+              name="team_id"
+              defaultValue={profile.team_id ?? undefined}
+              items={Object.fromEntries(teams.map((t) => [t.id, t.name]))}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sem equipe" />
               </SelectTrigger>
@@ -161,7 +210,11 @@ export function UserEditDialog({ profile, teams }: { profile: Profile; teams: Te
           <div className="flex gap-3">
             <div className="flex flex-1 flex-col gap-1.5">
               <Label>Perfil</Label>
-              <Select name="role" defaultValue={profile.role}>
+              <Select
+                name="role"
+                defaultValue={profile.role}
+                items={Object.fromEntries(ROLE_OPTIONS.map((r) => [r.value, r.label]))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -177,13 +230,20 @@ export function UserEditDialog({ profile, teams }: { profile: Profile; teams: Te
 
             <div className="flex flex-1 flex-col gap-1.5">
               <Label>Acesso</Label>
-              <Select name="status" defaultValue={profile.status}>
+              <Select
+                name="status"
+                defaultValue={profile.status}
+                items={Object.fromEntries(STATUS_OPTIONS.map((s) => [s.value, s.label]))}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Aprovado / ativo</SelectItem>
-                  <SelectItem value="inactive">Bloqueado</SelectItem>
+                  {STATUS_OPTIONS.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>
+                      {s.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -199,6 +259,22 @@ export function UserEditDialog({ profile, teams }: { profile: Profile; teams: Te
             <KeyRound className="size-4" />
             {resetting ? "Gerando..." : "Redefinir senha"}
           </Button>
+
+          {semeandoTempoHistory.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label>Histórico Semeando Tempo</Label>
+              <div className="flex flex-col gap-1 rounded-lg border p-2 text-sm">
+                {semeandoTempoHistory.map((h) => (
+                  <div key={h.id} className="flex items-center justify-between gap-2">
+                    <span className="text-muted-foreground">
+                      {new Date(h.entered_at + "T00:00:00").toLocaleDateString("pt-BR")}
+                    </span>
+                    <span className="flex-1 truncate text-right">{h.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <DialogFooter>
             <Button type="submit" disabled={pending}>

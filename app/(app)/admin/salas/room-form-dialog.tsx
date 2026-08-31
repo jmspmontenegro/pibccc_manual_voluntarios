@@ -14,32 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { createTeam, updateTeam } from "./actions";
+import { createRoom, updateRoom } from "./actions";
 
-type Supervisor = { id: string; full_name: string | null; email: string };
+type Room = { id: string; name: string; description: string | null; location: string | null };
 
-type Team = {
-  id: string;
-  name: string;
-  supervisor_id: string | null;
-  color: string;
-};
-
-export function TeamFormDialog({
-  team,
-  supervisors,
-}: {
-  team?: Team;
-  supervisors: Supervisor[];
-}) {
+export function RoomFormDialog({ room }: { room?: Room }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -48,7 +28,7 @@ export function TeamFormDialog({
   function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
-      const action = team ? updateTeam : createTeam;
+      const action = room ? updateRoom : createRoom;
       const result = await action(formData);
       if (result.error) {
         setError(result.error);
@@ -63,25 +43,25 @@ export function TeamFormDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          team ? (
+          room ? (
             <Button type="button" variant="ghost" size="icon-sm">
               <Pencil className="size-4" />
             </Button>
           ) : (
             <Button type="button">
               <Plus className="size-4" />
-              Nova equipe
+              Nova sala
             </Button>
           )
         }
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{team ? "Editar equipe" : "Nova equipe"}</DialogTitle>
+          <DialogTitle>{room ? "Editar sala" : "Nova sala"}</DialogTitle>
         </DialogHeader>
 
         <form action={handleSubmit} className="flex flex-col gap-4">
-          {team && <input type="hidden" name="id" value={team.id} />}
+          {room && <input type="hidden" name="id" value={room.id} />}
 
           {error && (
             <Alert variant="destructive">
@@ -91,43 +71,17 @@ export function TeamFormDialog({
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" name="name" required defaultValue={team?.name} />
+            <Input id="name" name="name" required defaultValue={room?.name} />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Supervisor responsável</Label>
-            <Select
-              name="supervisor_id"
-              defaultValue={team?.supervisor_id ?? undefined}
-              items={Object.fromEntries(supervisors.map((s) => [s.id, s.full_name || s.email]))}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sem supervisor" />
-              </SelectTrigger>
-              <SelectContent>
-                {supervisors.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.full_name || s.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="description">Descrição</Label>
+            <Input id="description" name="description" defaultValue={room?.description ?? ""} />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="color">Cor do badge</Label>
-            <div className="flex items-center gap-2">
-              <input
-                id="color"
-                name="color"
-                type="color"
-                defaultValue={team?.color ?? "#8060FF"}
-                className="h-9 w-14 rounded-md border border-input"
-              />
-              <span className="text-sm text-muted-foreground">
-                Usada sempre que o nome da equipe aparecer como badge.
-              </span>
-            </div>
+            <Label htmlFor="location">Localização</Label>
+            <Input id="location" name="location" defaultValue={room?.location ?? ""} />
           </div>
 
           <DialogFooter>

@@ -72,6 +72,7 @@ export function ListToolbar({
           <Select
             defaultValue={searchParams.get("sort") ?? sortOptions[0].value}
             onValueChange={(value) => setParam("sort", value ?? "")}
+            items={Object.fromEntries(sortOptions.map((o) => [o.value, o.label]))}
           >
             <SelectTrigger className="sm:w-44">
               <SelectValue />

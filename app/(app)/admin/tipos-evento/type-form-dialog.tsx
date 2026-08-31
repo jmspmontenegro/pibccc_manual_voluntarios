@@ -22,24 +22,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { createTeam, updateTeam } from "./actions";
+import { createEventType, updateEventType } from "./actions";
 
-type Supervisor = { id: string; full_name: string | null; email: string };
+type EventType = { id: string; name: string; description: string | null; active: boolean };
 
-type Team = {
-  id: string;
-  name: string;
-  supervisor_id: string | null;
-  color: string;
-};
-
-export function TeamFormDialog({
-  team,
-  supervisors,
-}: {
-  team?: Team;
-  supervisors: Supervisor[];
-}) {
+export function TypeFormDialog({ eventType }: { eventType?: EventType }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -48,7 +35,7 @@ export function TeamFormDialog({
   function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
-      const action = team ? updateTeam : createTeam;
+      const action = eventType ? updateEventType : createEventType;
       const result = await action(formData);
       if (result.error) {
         setError(result.error);
@@ -63,25 +50,25 @@ export function TeamFormDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          team ? (
+          eventType ? (
             <Button type="button" variant="ghost" size="icon-sm">
               <Pencil className="size-4" />
             </Button>
           ) : (
             <Button type="button">
               <Plus className="size-4" />
-              Nova equipe
+              Novo tipo
             </Button>
           )
         }
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{team ? "Editar equipe" : "Nova equipe"}</DialogTitle>
+          <DialogTitle>{eventType ? "Editar tipo de evento" : "Novo tipo de evento"}</DialogTitle>
         </DialogHeader>
 
         <form action={handleSubmit} className="flex flex-col gap-4">
-          {team && <input type="hidden" name="id" value={team.id} />}
+          {eventType && <input type="hidden" name="id" value={eventType.id} />}
 
           {error && (
             <Alert variant="destructive">
@@ -91,43 +78,33 @@ export function TeamFormDialog({
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" name="name" required defaultValue={team?.name} />
+            <Input id="name" name="name" required defaultValue={eventType?.name} />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Supervisor responsável</Label>
+            <Label htmlFor="description">Descrição</Label>
+            <Input
+              id="description"
+              name="description"
+              defaultValue={eventType?.description ?? ""}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Status</Label>
             <Select
-              name="supervisor_id"
-              defaultValue={team?.supervisor_id ?? undefined}
-              items={Object.fromEntries(supervisors.map((s) => [s.id, s.full_name || s.email]))}
+              name="active"
+              defaultValue={eventType ? String(eventType.active) : "true"}
+              items={{ true: "Ativo", false: "Inativo" }}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sem supervisor" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {supervisors.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.full_name || s.email}
-                  </SelectItem>
-                ))}
+                <SelectItem value="true">Ativo</SelectItem>
+                <SelectItem value="false">Inativo</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="color">Cor do badge</Label>
-            <div className="flex items-center gap-2">
-              <input
-                id="color"
-                name="color"
-                type="color"
-                defaultValue={team?.color ?? "#8060FF"}
-                className="h-9 w-14 rounded-md border border-input"
-              />
-              <span className="text-sm text-muted-foreground">
-                Usada sempre que o nome da equipe aparecer como badge.
-              </span>
-            </div>
           </div>
 
           <DialogFooter>

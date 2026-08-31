@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,11 +22,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { addEntry } from "./actions";
+import { PersonPicker, type Person } from "@/components/crud/person-picker";
+import { addAssignment } from "../actions";
 
-type Volunteer = { id: string; full_name: string | null; email: string };
+type Room = { id: string; name: string };
 
-export function AddEntryDialog({ volunteers }: { volunteers: Volunteer[] }) {
+export function AddAssignmentDialog({
+  scaleId,
+  eventId,
+  volunteers,
+  rooms,
+}: {
+  scaleId: string;
+  eventId: string;
+  volunteers: Person[];
+  rooms: Room[];
+}) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -35,7 +46,7 @@ export function AddEntryDialog({ volunteers }: { volunteers: Volunteer[] }) {
   function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
-      const result = await addEntry(formData);
+      const result = await addAssignment(formData);
       if (result.error) {
         setError(result.error);
         return;
@@ -49,18 +60,21 @@ export function AddEntryDialog({ volunteers }: { volunteers: Volunteer[] }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button type="button">
-            <Plus className="size-4" />
+          <Button type="button" variant="outline" size="sm">
+            <UserPlus className="size-4" />
             Adicionar voluntário
           </Button>
         }
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar ao Semeando Tempo</DialogTitle>
+          <DialogTitle>Adicionar voluntário à escala</DialogTitle>
         </DialogHeader>
 
         <form action={handleSubmit} className="flex flex-col gap-4">
+          <input type="hidden" name="scale_id" value={scaleId} />
+          <input type="hidden" name="event_id" value={eventId} />
+
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -69,14 +83,19 @@ export function AddEntryDialog({ volunteers }: { volunteers: Volunteer[] }) {
 
           <div className="flex flex-col gap-1.5">
             <Label>Voluntário</Label>
-            <Select name="user_id" required>
+            <PersonPicker name="user_id" people={volunteers} />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Sala (opcional)</Label>
+            <Select name="room_id" items={Object.fromEntries(rooms.map((r) => [r.id, r.name]))}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecione..." />
+                <SelectValue placeholder="Sem sala" />
               </SelectTrigger>
               <SelectContent>
-                {volunteers.map((v) => (
-                  <SelectItem key={v.id} value={v.id}>
-                    {v.full_name || v.email}
+                {rooms.map((r) => (
+                  <SelectItem key={r.id} value={r.id}>
+                    {r.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -84,24 +103,13 @@ export function AddEntryDialog({ volunteers }: { volunteers: Volunteer[] }) {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="entered_at">Data</Label>
-            <Input
-              id="entered_at"
-              name="entered_at"
-              type="date"
-              defaultValue={new Date().toISOString().slice(0, 10)}
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="note">Observação (opcional)</Label>
-            <Input id="note" name="note" placeholder="Ex: cobriu a escala de Culto Infantil" />
+            <Label htmlFor="role">Função (opcional)</Label>
+            <Input id="role" name="role" placeholder="Ex: Responsável, Apoio..." />
           </div>
 
           <DialogFooter>
             <Button type="submit" disabled={pending}>
-              {pending ? "Salvando..." : "Adicionar"}
+              {pending ? "Adicionando..." : "Adicionar"}
             </Button>
           </DialogFooter>
         </form>

@@ -36,12 +36,14 @@ export async function updateUser(formData: FormData) {
   const role = formData.get("role") as string;
   const status = formData.get("status") as string;
   const team_id = (formData.get("team_id") as string) || null;
+  const preferred_room_id = (formData.get("preferred_room_id") as string) || null;
+  const birth_date = (formData.get("birth_date") as string) || null;
 
   // RLS no banco também barra role/status pra quem não for admin (trigger
   // protect_role_status_trigger) — checagem aqui é só pra feedback melhor.
   const { error } = await check.supabase
     .from("profiles")
-    .update({ full_name, phone, address, role, status, team_id })
+    .update({ full_name, phone, address, role, status, team_id, preferred_room_id, birth_date })
     .eq("id", id);
 
   revalidatePath("/admin/usuarios");
@@ -68,7 +70,7 @@ export async function createUser(formData: FormData) {
   // Usuário adicionado diretamente por um admin já nasce aprovado — o
   // bloqueio automático de handle_new_user() é só pro autocadastro público.
   if (!error && data.user) {
-    await admin.from("profiles").update({ status: "active" }).eq("id", data.user.id);
+    await admin.from("profiles").update({ status: "approved" }).eq("id", data.user.id);
   }
 
   revalidatePath("/admin/usuarios");

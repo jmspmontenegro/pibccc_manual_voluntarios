@@ -20,13 +20,13 @@ export async function login(formData: FormData) {
     .eq("id", data.user.id)
     .single();
 
-  if (profile?.status === "inactive") {
+  if (profile?.status !== "approved") {
     await supabase.auth.signOut();
-    redirect(
-      `/login?error=${encodeURIComponent(
-        "Seu cadastro ainda está em análise. Aguarde a aprovação da coordenação."
-      )}`
-    );
+    const message =
+      profile?.status === "blocked"
+        ? "Seu acesso foi bloqueado. Fale com a coordenação."
+        : "Seu cadastro ainda está em análise. Aguarde a aprovação da coordenação.";
+    redirect(`/login?error=${encodeURIComponent(message)}`);
   }
 
   redirect("/");

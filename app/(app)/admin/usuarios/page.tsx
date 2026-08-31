@@ -5,22 +5,27 @@ import { getRolePermissions, can } from "@/lib/permissions";
 import { ListToolbar } from "@/components/crud/list-toolbar";
 import { TeamBadge } from "@/components/team-badge";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserCreateDialog } from "./user-create-dialog";
 import { UserEditDialog } from "./user-edit-dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 const ROLE_LABEL: Record<string, string> = {
   admin: "Administrador",
   coordinator: "Coordenação",
   leader: "Supervisor",
   volunteer: "Voluntário",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: "Pendente",
+  approved: "Aprovado",
+  blocked: "Bloqueado",
+};
+
+const STATUS_VARIANT: Record<string, "default" | "destructive" | "outline"> = {
+  pending: "outline",
+  approved: "default",
+  blocked: "destructive",
 };
 
 export default async function UsuariosPage({
@@ -46,7 +51,7 @@ export default async function UsuariosPage({
   let query = supabase
     .from("profiles")
     .select(
-      "id, full_name, email, phone, address, role, status, created_at, team_id, team:teams!profiles_team_id_fkey(id, name, color)"
+      "id, full_name, email, phone, address, role, status, created_at, team_id, preferred_room_id, birth_date, team:teams!profiles_team_id_fkey(id, name, color)"
     );
 
   if (q) query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
@@ -54,6 +59,18 @@ export default async function UsuariosPage({
 
   const { data: profiles } = await query;
   const { data: teams } = await supabase.from("teams").select("id, name").order("name");
+  const { data: rooms } = await supabase.from("rooms").select("id, name").order("name");
+  const { data: semeandoTempoEntries } = await supabase
+    .from("semeando_tempo_entries")
+    .select("id, user_id, entered_at, note")
+    .order("entered_at", { ascending: false });
+
+  const semeandoTempoByUser = new Map<string, { id: string; entered_at: string; note: string | null }[]>();
+  for (const e of semeandoTempoEntries ?? []) {
+    const list = semeandoTempoByUser.get(e.user_id) ?? [];
+    list.push({ id: e.id, entered_at: e.entered_at, note: e.note });
+    semeandoTempoByUser.set(e.user_id, list);
+  }
 
   const canCreate = can(perms, "usuarios", "create");
   const canEdit = can(perms, "usuarios", "edit");
@@ -87,59 +104,58 @@ export default async function UsuariosPage({
           "E-mail": r.email,
           "Criado em": r.createdAtLabel,
           Perfil: r.roleLabel,
-          Status: r.status === "active" ? "Aprovado" : "Bloqueado",
+          Status: STATUS_LABEL[r.status] ?? r.status,
         }))}
         filename="usuarios"
       />
 
-      <div className="print-area rounded-xl border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>E-mail</TableHead>
-              <TableHead>Criado em</TableHead>
-              <TableHead>Perfil</TableHead>
-              <TableHead>Equipe</TableHead>
-              <TableHead>Status</TableHead>
-              {canEdit && <TableHead className="text-right">Ações</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((p) => (
-              <TableRow key={p.id}>
-                <TableCell>{p.full_name || "(sem nome)"}</TableCell>
-                <TableCell>{p.email}</TableCell>
-                <TableCell>{p.createdAtLabel}</TableCell>
-                <TableCell>{p.roleLabel}</TableCell>
-                <TableCell>
-                  {(p as any).team ? (
-                    <TeamBadge name={(p as any).team.name} color={(p as any).team.color} />
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={p.status === "active" ? "default" : "destructive"}>
-                    {p.status === "active" ? "Aprovado" : "Bloqueado"}
-                  </Badge>
-                </TableCell>
+      <div className="print-area flex flex-col gap-3">
+        {rows.map((p) => {
+          const team = (p as any).team as { name: string; color: string } | null;
+          const initial = (p.full_name || p.email).charAt(0).toUpperCase();
+          return (
+            <div
+              key={p.id}
+              className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <Avatar className="size-11">
+                    <AvatarFallback className="bg-primary/10 font-semibold text-primary">
+                      {initial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold leading-tight">{p.full_name || "(sem nome)"}</p>
+                    <p className="text-xs text-muted-foreground">{p.email}</p>
+                  </div>
+                </div>
                 {canEdit && (
-                  <TableCell className="text-right">
-                    <UserEditDialog profile={p as any} teams={teams ?? []} />
-                  </TableCell>
+                  <UserEditDialog
+                    profile={p as any}
+                    teams={teams ?? []}
+                    rooms={rooms ?? []}
+                    semeandoTempoHistory={semeandoTempoByUser.get(p.id) ?? []}
+                  />
                 )}
-              </TableRow>
-            ))}
-            {rows.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
-                  Nenhum usuário encontrado.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Badge variant="secondary">{p.roleLabel}</Badge>
+                <Badge variant={STATUS_VARIANT[p.status] ?? "outline"}>
+                  {STATUS_LABEL[p.status] ?? p.status}
+                </Badge>
+                {team && <TeamBadge name={team.name} color={team.color} />}
+                <span className="ml-auto text-xs text-muted-foreground">{p.createdAtLabel}</span>
+              </div>
+            </div>
+          );
+        })}
+        {rows.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            Nenhum usuário encontrado.
+          </p>
+        )}
       </div>
     </main>
   );

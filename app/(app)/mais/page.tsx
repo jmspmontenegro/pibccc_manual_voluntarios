@@ -11,6 +11,10 @@ import {
   LogOut,
   Pencil,
   ChevronRight,
+  DoorOpen,
+  Tags,
+  ClipboardCheck,
+  FileCheck2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRolePermissions, can } from "@/lib/permissions";
@@ -107,6 +111,20 @@ export default async function MaisPage() {
           subtitle="Voluntários de prontidão pra cobrir escalas"
         />
         <MoreLink
+          href="/pessoas"
+          icon={Users}
+          iconBg="#16A34A"
+          title="Pessoas"
+          subtitle="Todos os voluntários e equipes"
+        />
+        <MoreLink
+          href="/documentos"
+          icon={FileCheck2}
+          iconBg="#0891B2"
+          title="Documentos"
+          subtitle="Certidão de antecedentes"
+        />
+        <MoreLink
           href="/manual"
           icon={BookOpen}
           iconBg="#A98CFF"
@@ -158,6 +176,42 @@ export default async function MaisPage() {
             iconBg="#2563AB"
             title="Equipes"
             subtitle="Cadastro de equipes do ministério"
+          />
+        )}
+        {can(perms, "salas", "view") && (
+          <MoreLink
+            href="/admin/salas"
+            icon={DoorOpen}
+            iconBg="#0EA5E9"
+            title="Salas"
+            subtitle="Cadastro de salas do ministério"
+          />
+        )}
+        {can(perms, "tipos_evento", "view") && (
+          <MoreLink
+            href="/admin/tipos-evento"
+            icon={Tags}
+            iconBg="#D97706"
+            title="Tipos de Evento"
+            subtitle="Culto, Reunião, Culto Especial..."
+          />
+        )}
+        {can(perms, "eventos", "view") && (
+          <MoreLink
+            href="/admin/eventos"
+            icon={ClipboardList}
+            iconBg="#DB2777"
+            title="Gerenciar Eventos"
+            subtitle="Criar e editar eventos e cultos"
+          />
+        )}
+        {can(perms, "checklists", "view") && (
+          <MoreLink
+            href="/admin/checklists"
+            icon={ClipboardCheck}
+            iconBg="#0D9488"
+            title="Checklists"
+            subtitle="Modelos reutilizáveis pras escalas"
           />
         )}
         {can(perms, "configuracoes", "view") && (

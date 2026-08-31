@@ -38,6 +38,8 @@ await shot("/admin/equipes", "11-equipes");
 await shot("/admin/configuracoes", "12-configuracoes");
 await shot("/admin/configuracoes/permissoes", "13-permissoes");
 await shot("/semeando-tempo", "14-semeando-tempo");
+await shot("/admin/salas", "15-salas");
+await shot("/admin/tipos-evento", "16-tipos-evento");
 
 console.log(await page.evaluate(() => document.title));
 await browser.close();

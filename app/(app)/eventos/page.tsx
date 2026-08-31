@@ -1,114 +1,65 @@
-"use client";
+import { CalendarDays, MapPin } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
-import { PartyPopper, Palette, Trees } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+export default async function EventosPage() {
+  const supabase = await createClient();
 
-const EVENTS = [
-  {
-    icon: PartyPopper,
-    title: "Festa Junina Kids",
-    status: "Em breve",
-    date: "Sáb, 15 Ago",
-    time: "14:00 - 18:00",
-    place: "Salão Principal",
-    participants: "+45 participantes",
-    bg: "#FFF4E0",
-    accent: "#D97706",
-  },
-  {
-    icon: Palette,
-    title: "Oficina de Arte Sacra",
-    status: "Aberto",
-    date: "Qui, 12 Ago",
-    time: "14:00 - 16:00",
-    place: "Sala Kids 1",
-    participants: "+18 participantes",
-    bg: "#FCE7F3",
-    accent: "#DB2777",
-  },
-  {
-    icon: Trees,
-    title: "Acampamento Juvenil",
-    status: "Inscrições",
-    date: "20-22 Set",
-    time: "Fim de semana",
-    place: "Chácara da Igreja",
-    participants: "+60 participantes",
-    bg: "#DCFCE7",
-    accent: "#16A34A",
-  },
-];
+  const today = new Date().toISOString().slice(0, 10);
 
-export default function EventosPage() {
+  const { data: events } = await supabase
+    .from("events")
+    .select("id, title, date, start_time, location, event_type:event_types(name)")
+    .gte("date", today)
+    .order("date", { ascending: true });
+
+  const rows = (events ?? []).map((e) => ({
+    ...e,
+    typeName: (e as any).event_type?.name ?? "",
+    dateLabel: new Date(e.date + "T00:00:00").toLocaleDateString("pt-BR", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+    }),
+  }));
+
   return (
     <main className="mx-auto flex max-w-md flex-col gap-4 p-4 sm:p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-serif text-2xl font-bold">Eventos</h1>
-          <p className="text-sm text-muted-foreground">{EVENTS.length} eventos programados</p>
-        </div>
-        <Button disabled>+ Criar</Button>
+      <div>
+        <h1 className="font-serif text-2xl font-bold">Cultos e Eventos</h1>
+        <p className="text-sm text-muted-foreground">{rows.length} próximos</p>
       </div>
 
-      <Tabs defaultValue="todos">
-        <TabsList className="w-full">
-          <TabsTrigger value="todos" className="flex-1">
-            Todos
-          </TabsTrigger>
-          <TabsTrigger value="mes" className="flex-1">
-            Este mês
-          </TabsTrigger>
-          <TabsTrigger value="proximos" className="flex-1">
-            Próximos
-          </TabsTrigger>
-          <TabsTrigger value="encerrados" className="flex-1">
-            Encerrados
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="todos" className="mt-4 flex flex-col gap-3">
-          {EVENTS.map((e) => (
-            <div
-              key={e.title}
-              className="flex flex-col gap-3 rounded-2xl p-4"
-              style={{ backgroundColor: e.bg }}
-            >
-              <div className="flex items-start gap-3">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white">
-                  <e.icon className="size-5" style={{ color: e.accent }} />
-                </span>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-bold">{e.title}</p>
-                    <Badge style={{ backgroundColor: e.accent, color: "#fff" }}>{e.status}</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {e.date} · {e.time}
-                  </p>
-                  <p className="text-sm text-muted-foreground">{e.place}</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">
-                  {e.participants}
-                </span>
-                <Button size="sm" style={{ backgroundColor: e.accent }}>
-                  Detalhes
-                </Button>
-              </div>
+      <div className="flex flex-col gap-3">
+        {rows.map((e) => (
+          <a
+            key={e.id}
+            href={`/eventos/${e.id}`}
+            className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <CalendarDays className="size-5" />
+            </span>
+            <div className="flex-1">
+              <p className="font-semibold leading-tight">{e.title}</p>
+              <p className="text-xs text-muted-foreground">
+                {e.typeName} · {e.dateLabel}
+                {e.start_time ? ` · ${e.start_time.slice(0, 5)}` : ""}
+              </p>
+              {e.location && (
+                <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="size-3" />
+                  {e.location}
+                </p>
+              )}
             </div>
-          ))}
-        </TabsContent>
-        <TabsContent value="mes" />
-        <TabsContent value="proximos" />
-        <TabsContent value="encerrados" />
-      </Tabs>
-
-      <p className="text-center text-xs text-muted-foreground">
-        Conteúdo ilustrativo — eventos reais ainda não implementados.
-      </p>
+          </a>
+        ))}
+        {rows.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            Nenhum evento programado.
+          </p>
+        )}
+      </div>
     </main>
   );
 }
