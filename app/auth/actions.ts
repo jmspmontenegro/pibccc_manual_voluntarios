@@ -8,10 +8,25 @@ export async function login(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("status")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profile?.status === "inactive") {
+    await supabase.auth.signOut();
+    redirect(
+      `/login?error=${encodeURIComponent(
+        "Seu cadastro ainda está em análise. Aguarde a aprovação da coordenação."
+      )}`
+    );
   }
 
   redirect("/");
@@ -36,7 +51,9 @@ export async function signup(formData: FormData) {
 
   redirect(
     "/login?message=" +
-      encodeURIComponent("Conta criada. Verifique seu e-mail para confirmar o cadastro.")
+      encodeURIComponent(
+        "Cadastro enviado! Aguarde a aprovação da coordenação do ministério para acessar."
+      )
   );
 }
 

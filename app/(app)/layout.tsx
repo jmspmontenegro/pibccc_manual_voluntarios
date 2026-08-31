@@ -10,16 +10,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
   return (
-    <>
+    <div className="print-scope">
       <div className="pb-24">{children}</div>
-      <BottomNav isAdmin={profile?.role === "admin"} />
-    </>
+      <BottomNav />
+    </div>
   );
 }

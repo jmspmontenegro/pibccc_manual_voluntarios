@@ -73,6 +73,46 @@
             font-size: 16px;
         }
 
+/* ── GLASS (glassmorphism) ──────────────────────────────────────────────
+   Utilities do Tailwind v4 (via @utility, entram no sistema de layers dele
+   e podem ser combinadas com variants tipo dark:/hover:). Usadas nos cards
+   do redesign (hero, login/cadastro, nav) pra dar o efeito "vidro fosco". */
+@utility glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+@utility glass-dark {
+  background: rgba(90, 63, 214, 0.45);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ── PRINT (listagens de CRUD) ───────────────────────────────────────────
+   Padrão: envolver o conteúdo autenticado em .print-scope (ver app/(app)/
+   layout.tsx) e a área que deve sair impressa em .print-area. Descendente
+   sempre escopado sob .print-scope pra não repetir o bug do seletor
+   genérico solto (ver aviso no topo deste arquivo). */
+@layer utilities {
+  @media print {
+    .print-scope :where(*):not(.print-area, .print-area *) {
+      visibility: hidden;
+    }
+    .print-scope .print-area,
+    .print-scope .print-area * {
+      visibility: visible;
+    }
+    .print-scope .print-area {
+      position: absolute;
+      inset: 0;
+      padding: 24px;
+    }
+  }
+}
+
 /* Estilos do manual (legado, extraído do site estático) escopados dentro
    de .manual-scope — sem isso, seletores genéricos como "p { color: ... }"
    vazam pra fora da camada @layer do Tailwind e quebram as cores/utilitários

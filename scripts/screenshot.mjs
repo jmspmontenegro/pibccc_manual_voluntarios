@@ -27,11 +27,17 @@ await page.waitForTimeout(2000);
 console.log("after click url:", page.url());
 
 await shot("/", "03-home");
-await shot("/manual", "04-manual");
-await shot("/perfil", "05-perfil");
-await shot("/admin/usuarios", "06-usuarios");
-await shot("/admin/configuracoes", "07-configuracoes");
-await shot("/banco-de-horas", "08-banco-de-horas");
+await shot("/agenda", "04-agenda");
+await shot("/eventos", "05-eventos");
+await shot("/pessoas", "06-pessoas");
+await shot("/mais", "07-mais");
+await shot("/manual", "08-manual");
+await shot("/perfil", "09-perfil");
+await shot("/admin/usuarios", "10-usuarios");
+await shot("/admin/equipes", "11-equipes");
+await shot("/admin/configuracoes", "12-configuracoes");
+await shot("/admin/configuracoes/permissoes", "13-permissoes");
+await shot("/semeando-tempo", "14-semeando-tempo");
 
 console.log(await page.evaluate(() => document.title));
 await browser.close();
