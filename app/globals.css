@@ -1,3 +1,39 @@
+@import "tailwindcss";
+
+/* Ponte entre os tokens do manual (definidos abaixo) e os tokens que os
+   componentes shadcn/ui esperam (bg-primary, text-muted-foreground, etc). */
+@theme inline {
+  --color-background: var(--cream);
+  --color-foreground: var(--text);
+  --color-card: var(--white);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--white);
+  --color-popover-foreground: var(--text);
+
+  --color-primary: var(--orange);
+  --color-primary-foreground: var(--white);
+  --color-secondary: var(--orange-pale);
+  --color-secondary-foreground: var(--orange-dark);
+  --color-muted: var(--orange-pale);
+  --color-muted-foreground: var(--text-soft);
+  --color-accent: var(--orange-pale);
+  --color-accent-foreground: var(--orange-dark);
+  --color-destructive: #dc2626;
+
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--orange);
+
+  --radius-xs: calc(var(--radius) * 0.4);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+
+  --font-sans: "Nunito", sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
         :root {
             --orange: #8060FF;
             --orange-dark: #5A3FD6;
@@ -21,14 +57,6 @@
             --shadow-lg: 0 12px 48px rgba(128, 96, 255, 0.18);
         }
 
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         html {
             scroll-behavior: smooth;
         }
@@ -42,10 +70,17 @@
             font-family: 'Nunito', sans-serif;
             background: var(--cream);
             color: var(--text);
-            line-height: 1.7;
             font-size: 16px;
         }
 
+/* Estilos do manual (legado, extraído do site estático) escopados dentro
+   de .manual-scope — sem isso, seletores genéricos como "p { color: ... }"
+   vazam pra fora da camada @layer do Tailwind e quebram as cores/utilitários
+   shadcn em todas as outras páginas (unlayered sempre vence layered, não
+   importa a especificidade). O @media print no fim do arquivo fica de fora
+   de propósito: ele mira em `body.checklist-only`, que só existe durante a
+   impressão do manual. */
+.manual-scope {
         /* ── SIDEBAR ── */
         .sidebar {
             position: fixed;
@@ -1240,7 +1275,7 @@
                 font-size: 30px;
             }
         }
-
+} /* fim .manual-scope */
 
         @media print {
             .sidebar,

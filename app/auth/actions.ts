@@ -14,7 +14,7 @@ export async function login(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/dashboard");
+  redirect("/");
 }
 
 export async function signup(formData: FormData) {

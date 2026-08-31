@@ -19,10 +19,17 @@ if [ -z "$DESCRIPTION" ]; then
 fi
 
 # Valida o build do Next.js antes de subir (evita quebrar produção no Vercel)
-# Nota: chama o binário via node diretamente (não "npm run build") porque o
-# wrapper npm.cmd do Windows não suporta caminho UNC (\\wsl.localhost\...)
+# Nota: roda nativo dentro do WSL sempre que possível (evita os bugs de UNC
+# do npm/Turbopack/tsc — ver AGENTS.md). Se já estiver dentro do WSL, roda
+# direto; se estiver no lado Windows, chama via wsl.exe.
 echo "Validando build do Next.js..."
-if ! node ./node_modules/next/dist/bin/next build; then
+if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
+    BUILD_OK=0; npm run build || BUILD_OK=1
+else
+    BUILD_OK=0
+    wsl.exe -e bash -lc 'export NVM_DIR=/root/.nvm; source $NVM_DIR/nvm.sh; nvm use v26.2.0 >/dev/null; cd /home/projetos/pibccc_manual_voluntarios && npm run build' || BUILD_OK=1
+fi
+if [ "$BUILD_OK" != "0" ]; then
     echo "Erro: build falhou. Deploy cancelado."
     exit 1
 fi
