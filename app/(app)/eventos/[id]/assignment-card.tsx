@@ -26,6 +26,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { TeamBadge } from "@/components/team-badge";
 import { PersonPicker, type Person } from "@/components/crud/person-picker";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { respondToAssignment, updateAssignment, deleteAssignment } from "../actions";
 
 const CONFIRMATION_LABEL: Record<string, string> = {
@@ -71,7 +72,9 @@ function DeclineDialog({ id, eventId, volunteers }: { id: string; eventId: strin
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button type="button" size="sm" variant="outline" />}>
         <X className="size-4" />
         Recusar
@@ -98,7 +101,8 @@ function DeclineDialog({ id, eventId, volunteers }: { id: string; eventId: strin
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }
 
@@ -124,7 +128,9 @@ function ManageDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           <Button type="button" variant="ghost" size="icon-sm">
@@ -203,7 +209,8 @@ function ManageDialog({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }
 
@@ -239,7 +246,9 @@ export function AssignmentCard({
   const initial = assignment.name.charAt(0).toUpperCase();
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+    <>
+      <LoadingOverlay show={pending} />
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <Avatar className="size-10">
@@ -279,6 +288,7 @@ export function AssignmentCard({
           <DeclineDialog id={assignment.id} eventId={eventId} volunteers={volunteers} />
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

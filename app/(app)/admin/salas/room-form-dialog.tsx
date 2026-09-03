@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { createRoom, updateRoom } from "./actions";
 
 type Room = { id: string; name: string; description: string | null; location: string | null };
@@ -40,7 +41,9 @@ export function RoomFormDialog({ room }: { room?: Room }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           room ? (
@@ -91,6 +94,7 @@ export function RoomFormDialog({ room }: { room?: Room }) {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

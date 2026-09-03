@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { createTeam, updateTeam } from "./actions";
 
 type Supervisor = { id: string; full_name: string | null; email: string };
@@ -60,7 +61,9 @@ export function TeamFormDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           team ? (
@@ -137,6 +140,7 @@ export function TeamFormDialog({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

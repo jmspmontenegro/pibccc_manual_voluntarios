@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import { ArrowLeft, CalendarDays } from "lucide-react";
+import { ArrowLeft, CalendarDays, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRolePermissions, can } from "@/lib/permissions";
 import { ListToolbar } from "@/components/crud/list-toolbar";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { Button } from "@/components/ui/button";
 import { EventFormDialog } from "./event-form-dialog";
 import { deleteEvent } from "@/app/(app)/eventos/actions";
 
@@ -63,7 +64,14 @@ export default async function AdminEventosPage({
 
       <div className="flex items-center justify-between">
         <h1 className="font-serif text-2xl">Eventos</h1>
-        {canCreate && <EventFormDialog eventTypes={eventTypes ?? []} />}
+        {canCreate && (
+          <a href="/admin/eventos/novo">
+            <Button type="button">
+              <Plus className="size-4" />
+              Novo evento
+            </Button>
+          </a>
+        )}
       </div>
 
       <ListToolbar

@@ -138,4 +138,9 @@ Antes de reportar uma mudança de UI como pronta, **olhe a tela renderizada de v
 ## Deploy
 
 - Todo deploy pra `main`/produção passa por `./script_deploy.sh "descrição"` — nunca `git push` direto. O script valida o build e usa o padrão de commit `vYYYY.MM.DD-HH.MM/descrição`.
+- **Esse é o padrão obrigatório de mensagem de commit em `main`, gerado automaticamente pelo script (`script_deploy.sh` linha 39: `date +"%Y.%m.%d-%H.%M"`) — nunca escrever esse prefixo manualmente, só chamar o script:**
+  - `v` fixo + ano.mês.dia + hífen + hora.minuto de quando o deploy rodou (24h, hora local da máquina que roda o script), ex.: `v2026.08.31-20.34`.
+  - `/` separando o prefixo da descrição.
+  - Descrição em português, curta e direta; por convenção (ver `git log`) costuma começar com o tipo no estilo conventional commits — `feat:`, `fix:`, `chore:` — seguido do resumo do que mudou, podendo listar vários itens separados por vírgula quando o deploy junta mais de uma mudança (ex.: `feat: eventos+escalas+atribuicoes, termo de voluntariado, RSVP, checklists...`).
+  - Commits fora desse fluxo (ex.: direto numa branch de trabalho, sem passar por `script_deploy.sh`) não precisam desse prefixo — ele é específico de quando o código vai pra `main`/produção.
 - Sempre confirmar com o usuário antes de rodar o deploy, mesmo que o código já esteja pronto.

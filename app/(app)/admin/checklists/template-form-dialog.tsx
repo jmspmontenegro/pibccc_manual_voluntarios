@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { createTemplate, updateTemplate } from "./actions";
 
 type Template = { id: string; name: string; items: string[] };
@@ -41,7 +42,9 @@ export function TemplateFormDialog({ template }: { template?: Template }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           template ? (
@@ -113,6 +116,7 @@ export function TemplateFormDialog({ template }: { template?: Template }) {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

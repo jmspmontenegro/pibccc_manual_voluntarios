@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PersonPicker, type Person } from "@/components/crud/person-picker";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { addAssignment } from "../actions";
 
 type Room = { id: string; name: string };
@@ -57,7 +58,9 @@ export function AddAssignmentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           <Button type="button" variant="outline" size="sm">
@@ -114,6 +117,7 @@ export function AddAssignmentDialog({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

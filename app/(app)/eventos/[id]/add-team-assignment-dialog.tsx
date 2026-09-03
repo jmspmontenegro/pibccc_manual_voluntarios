@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { addTeamAssignments } from "../actions";
 
 type Team = { id: string; name: string; color: string };
@@ -82,7 +83,9 @@ export function AddTeamAssignmentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           <Button type="button" variant="outline" size="sm">
@@ -179,6 +182,7 @@ export function AddTeamAssignmentDialog({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

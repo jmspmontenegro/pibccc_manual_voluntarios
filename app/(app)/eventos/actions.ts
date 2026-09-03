@@ -30,7 +30,7 @@ function addDays(dateStr: string, days: number) {
   return d.toISOString().slice(0, 10);
 }
 
-export async function createEvent(formData: FormData) {
+export async function createEventWithScale(formData: FormData) {
   const check = await requirePermission("eventos", "create");
   if (!check.ok) return { error: check.error };
 
@@ -47,7 +47,7 @@ export async function createEvent(formData: FormData) {
   const count = recurs ? weeks : 1;
   const recurrence_group_id = recurs && weeks > 1 ? crypto.randomUUID() : null;
 
-  const rows = Array.from({ length: count }, (_, i) => ({
+  const eventRows = Array.from({ length: count }, (_, i) => ({
     event_type_id,
     title,
     description,
@@ -59,11 +59,106 @@ export async function createEvent(formData: FormData) {
     created_by: check.userId,
   }));
 
-  const { error } = await check.supabase.from("events").insert(rows);
+  const { data: insertedEvents, error: eventsError } = await check.supabase
+    .from("events")
+    .insert(eventRows)
+    .select("id, date")
+    .order("date", { ascending: true });
+
+  if (eventsError || !insertedEvents || insertedEvents.length === 0) {
+    return { error: eventsError?.message ?? "Erro ao criar evento." };
+  }
+
+  const firstEventId = insertedEvents[0].id;
+
+  const scaleCheck = await requirePermission("escalas", "create");
+  if (!scaleCheck.ok) {
+    revalidatePath("/eventos");
+    revalidatePath("/admin/eventos");
+    return { error: null, eventId: firstEventId };
+  }
+
+  const scaleName = (formData.get("scale_name") as string) || "Escala";
+  const scriptUrl = (formData.get("script_url") as string) || null;
+  const file = formData.get("file") as File | null;
+  const hasFile = !!file && file.size > 0;
+  const teamId = (formData.get("team_id") as string) || null;
+  const teamUserIds = formData.getAll("team_user_ids") as string[];
+  const extraUserIds = (formData.getAll("extra_user_ids") as string[]).filter(
+    (id) => !teamUserIds.includes(id)
+  );
+  const roomId = (formData.get("room_id") as string) || null;
+  const role = (formData.get("role") as string) || null;
+  const checklistMode = (formData.get("checklist_mode") as string) || "none";
+  const templateId = (formData.get("template_id") as string) || null;
+
+  let templateName = "Checklist";
+  let templateItems: { label: string; position: number }[] = [];
+  if (checklistMode === "template" && templateId) {
+    const { data: template } = await check.supabase
+      .from("checklist_templates")
+      .select("name")
+      .eq("id", templateId)
+      .single();
+    templateName = template?.name ?? "Checklist";
+    const { data: items } = await check.supabase
+      .from("checklist_template_items")
+      .select("label, position")
+      .eq("template_id", templateId)
+      .order("position");
+    templateItems = items ?? [];
+  }
+
+  for (const ev of insertedEvents) {
+    const { data: scale } = await check.supabase
+      .from("scales")
+      .insert({ event_id: ev.id, name: scaleName, script_url: scriptUrl, created_by: check.userId })
+      .select("id")
+      .single();
+    if (!scale) continue;
+
+    if (hasFile) {
+      const path = `${scale.id}/${Date.now()}-${file!.name}`;
+      const { error: uploadError } = await check.supabase.storage
+        .from("scale-scripts")
+        .upload(path, file!);
+      if (!uploadError) {
+        await check.supabase.from("scales").update({ script_file_path: path }).eq("id", scale.id);
+      }
+    }
+
+    const assignmentRows = [
+      ...teamUserIds.map((user_id) => ({ scale_id: scale.id, team_id: teamId, user_id, room_id: roomId, role })),
+      ...extraUserIds.map((user_id) => ({ scale_id: scale.id, user_id, room_id: roomId, role })),
+    ];
+    if (assignmentRows.length > 0) {
+      await check.supabase.from("scale_assignments").insert(assignmentRows);
+    }
+
+    if (checklistMode === "template" && templateId) {
+      const { data: scaleChecklist } = await check.supabase
+        .from("scale_checklists")
+        .insert({ scale_id: scale.id, name: templateName })
+        .select("id")
+        .single();
+      if (scaleChecklist && templateItems.length > 0) {
+        await check.supabase.from("scale_checklist_items").insert(
+          templateItems.map((i) => ({
+            scale_checklist_id: scaleChecklist.id,
+            label: i.label,
+            position: i.position,
+          }))
+        );
+      }
+    } else if (checklistMode === "blank") {
+      await check.supabase.from("scale_checklists").insert({ scale_id: scale.id, name: "Checklist" });
+    }
+  }
 
   revalidatePath("/eventos");
   revalidatePath("/admin/eventos");
-  return { error: error?.message ?? null };
+  revalidatePath(`/eventos/${firstEventId}`);
+  return { error: null, eventId: firstEventId };
 }
 
 export async function updateEvent(formData: FormData) {

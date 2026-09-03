@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import {
   createScaleChecklistFromTemplate,
   createBlankScaleChecklist,
@@ -106,7 +107,9 @@ export function ChecklistSection({
   if (!checklist) {
     if (!canManage) return null;
     return (
-      <div className="flex flex-col gap-2 rounded-2xl border border-dashed p-4">
+      <>
+        <LoadingOverlay show={pending} />
+        <div className="flex flex-col gap-2 rounded-2xl border border-dashed p-4">
         <p className="flex items-center gap-2 text-sm font-semibold">
           <ClipboardCheck className="size-4" />
           Checklist da escala
@@ -131,12 +134,15 @@ export function ChecklistSection({
             Criar em branco
           </Button>
         </div>
-      </div>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+    <>
+      <LoadingOverlay show={pending} />
+      <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       <p className="flex items-center gap-2 text-sm font-semibold">
         <ClipboardCheck className="size-4" />
         {checklist.name}
@@ -178,6 +184,7 @@ export function ChecklistSection({
           </Button>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

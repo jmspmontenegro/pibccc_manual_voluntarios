@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { createUser } from "./actions";
 
 export function UserCreateDialog() {
@@ -37,7 +38,9 @@ export function UserCreateDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           <Button type="button">
@@ -82,6 +85,7 @@ export function UserCreateDialog() {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

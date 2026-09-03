@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { createEventType, updateEventType } from "./actions";
 
 type EventType = { id: string; name: string; description: string | null; active: boolean };
@@ -47,7 +48,9 @@ export function TypeFormDialog({ eventType }: { eventType?: EventType }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           eventType ? (
@@ -114,6 +117,7 @@ export function TypeFormDialog({ eventType }: { eventType?: EventType }) {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

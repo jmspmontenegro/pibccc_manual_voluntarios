@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Link as LinkIcon, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { getScaleScriptUrl, uploadScaleScript } from "../actions";
 
 export function RoteiroSection({
@@ -46,29 +47,35 @@ export function RoteiroSection({
 
   if (scriptUrl) {
     return (
-      <a
-        href={scriptUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-1 text-xs font-medium text-primary"
-      >
-        <LinkIcon className="size-3.5" />
-        Roteiro
-      </a>
+      <>
+        <LoadingOverlay show={opening || uploading} />
+        <a
+          href={scriptUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-1 text-xs font-medium text-primary"
+        >
+          <LinkIcon className="size-3.5" />
+          Roteiro
+        </a>
+      </>
     );
   }
 
   if (scriptFilePath) {
     return (
-      <button
-        type="button"
-        onClick={openFile}
-        disabled={opening}
-        className="flex items-center gap-1 text-xs font-medium text-primary"
-      >
-        <LinkIcon className="size-3.5" />
-        {opening ? "Abrindo..." : "Roteiro"}
-      </button>
+      <>
+        <LoadingOverlay show={opening || uploading} />
+        <button
+          type="button"
+          onClick={openFile}
+          disabled={opening}
+          className="flex items-center gap-1 text-xs font-medium text-primary"
+        >
+          <LinkIcon className="size-3.5" />
+          {opening ? "Abrindo..." : "Roteiro"}
+        </button>
+      </>
     );
   }
 
@@ -76,23 +83,29 @@ export function RoteiroSection({
 
   if (!showUpload) {
     return (
-      <button
-        type="button"
-        onClick={() => setShowUpload(true)}
-        className="flex items-center gap-1 text-xs font-medium text-muted-foreground"
-      >
-        <Upload className="size-3.5" />
-        Adicionar roteiro
-      </button>
+      <>
+        <LoadingOverlay show={opening || uploading} />
+        <button
+          type="button"
+          onClick={() => setShowUpload(true)}
+          className="flex items-center gap-1 text-xs font-medium text-muted-foreground"
+        >
+          <Upload className="size-3.5" />
+          Adicionar roteiro
+        </button>
+      </>
     );
   }
 
   return (
-    <form action={handleUpload} className="flex items-center gap-2">
-      <Input name="file" type="file" className="h-8 text-xs" />
-      <Button type="submit" size="sm" disabled={uploading}>
-        {uploading ? "..." : "Enviar"}
-      </Button>
-    </form>
+    <>
+      <LoadingOverlay show={opening || uploading} />
+      <form action={handleUpload} className="flex items-center gap-2">
+        <Input name="file" type="file" className="h-8 text-xs" />
+        <Button type="submit" size="sm" disabled={uploading}>
+          {uploading ? "..." : "Enviar"}
+        </Button>
+      </form>
+    </>
   );
 }

@@ -29,7 +29,7 @@ export default async function TiposEventoPage({
   const perms = await getRolePermissions(supabase, currentProfile!.role);
   if (!can(perms, "tipos_evento", "view")) redirect("/");
 
-  let query = supabase.from("event_types").select("id, name, description, active");
+  let query = supabase.from("event_types").select("id, name, description, active, is_system");
 
   if (q) query = query.ilike("name", `%${q}%`);
   query = query.order(sort === "name" ? "name" : "created_at", {
@@ -88,10 +88,10 @@ export default async function TiposEventoPage({
                   )}
                 </div>
               </div>
-              {(canEdit || canDelete) && (
+              {(canEdit || (canDelete && !r.is_system)) && (
                 <div className="flex gap-1">
                   {canEdit && <TypeFormDialog eventType={r} />}
-                  {canDelete && (
+                  {canDelete && !r.is_system && (
                     <DeleteButton
                       id={r.id}
                       action={deleteEventType}
@@ -101,9 +101,16 @@ export default async function TiposEventoPage({
                 </div>
               )}
             </div>
-            <Badge variant={r.active ? "default" : "outline"} className="w-fit">
-              {r.active ? "Ativo" : "Inativo"}
-            </Badge>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant={r.active ? "default" : "outline"} className="w-fit">
+                {r.active ? "Ativo" : "Inativo"}
+              </Badge>
+              {r.is_system && (
+                <Badge variant="secondary" className="w-fit">
+                  Nativo
+                </Badge>
+              )}
+            </div>
           </div>
         ))}
         {rows.length === 0 && (

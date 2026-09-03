@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { respondToRsvp } from "../actions";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -62,7 +63,9 @@ export function RsvpCard({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+    <>
+      <LoadingOverlay show={pending} />
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <Users2 className="size-5" />
@@ -107,6 +110,7 @@ export function RsvpCard({
           </Dialog>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

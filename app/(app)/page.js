@@ -1,4 +1,4 @@
-import { Bell, Sparkles, AlertTriangle, FileWarning, Users2, Cake } from "lucide-react";
+import { Sparkles, AlertTriangle, FileWarning, Cake } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 
@@ -73,19 +73,14 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-6 p-4 sm:p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[color:var(--orange-dark)] to-[color:var(--orange-light)] text-white shadow">
-            <Sparkles className="size-5" />
-          </span>
-          <div>
-            <p className="font-serif text-base font-bold leading-tight">Start</p>
-            <p className="text-xs leading-tight text-muted-foreground">PIB Campo Comprido</p>
-          </div>
-        </div>
-        <span className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Bell className="size-4" />
+      <div className="flex items-center gap-2.5">
+        <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[color:var(--orange-dark)] to-[color:var(--orange-light)] text-white shadow">
+          <Sparkles className="size-5" />
         </span>
+        <div>
+          <p className="font-serif text-base font-bold leading-tight">Start</p>
+          <p className="text-xs leading-tight text-muted-foreground">PIB Campo Comprido</p>
+        </div>
       </div>
 
       <div className="relative overflow-hidden rounded-2xl bg-primary p-6 text-primary-foreground shadow-lg">
@@ -101,10 +96,7 @@ export default async function HomePage() {
       </div>
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-lg font-bold">Avisos</h2>
-          <span className="text-sm font-semibold text-primary">Ver todos</span>
-        </div>
+        <h2 className="font-serif text-lg font-bold">Avisos</h2>
         <div className="flex flex-col gap-2.5">
           {nextAssignment && (
             <div className="flex flex-col gap-3 rounded-2xl bg-primary p-4 text-primary-foreground">
@@ -159,20 +151,11 @@ export default async function HomePage() {
             </a>
           )}
 
-          <div className="flex flex-col gap-3 rounded-2xl border border-[#93C5FD]/40 bg-[#EBF3FC] p-4 text-[#2563AB]">
-            <div className="flex items-center gap-3">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/60">
-                <Users2 className="size-5" />
-              </span>
-              <div className="flex-1">
-                <p className="text-sm font-bold">Reunião de líderes</p>
-                <p className="text-xs opacity-85">Quinta-feira às 19h30 — obrigatório</p>
-              </div>
-            </div>
-            <Button size="sm" className="w-fit">
-              Confirmar presença
-            </Button>
-          </div>
+          {!nextAssignment && !documentPending && (
+            <p className="rounded-2xl border border-dashed p-4 text-center text-sm text-muted-foreground">
+              Nenhum aviso no momento.
+            </p>
+          )}
         </div>
       </section>
 

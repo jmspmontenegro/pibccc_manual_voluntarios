@@ -6,6 +6,7 @@ import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { uploadDocument } from "./actions";
 
 export function DocumentUploadForm({ label = "Enviar certidão" }: { label?: string }) {
@@ -28,7 +29,9 @@ export function DocumentUploadForm({ label = "Enviar certidão" }: { label?: str
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="flex flex-col gap-2">
+    <>
+      <LoadingOverlay show={pending} />
+      <form ref={formRef} action={handleSubmit} className="flex flex-col gap-2">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
@@ -41,6 +44,7 @@ export function DocumentUploadForm({ label = "Enviar certidão" }: { label?: str
           {pending ? "Enviando..." : label}
         </Button>
       </div>
-    </form>
+      </form>
+    </>
   );
 }

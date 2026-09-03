@@ -111,13 +111,6 @@ export default async function MaisPage() {
           subtitle="Voluntários de prontidão pra cobrir escalas"
         />
         <MoreLink
-          href="/pessoas"
-          icon={Users}
-          iconBg="#16A34A"
-          title="Pessoas"
-          subtitle="Todos os voluntários e equipes"
-        />
-        <MoreLink
           href="/documentos"
           icon={FileCheck2}
           iconBg="#0891B2"

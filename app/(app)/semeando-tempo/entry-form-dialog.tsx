@@ -17,6 +17,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PersonPicker, type Person } from "@/components/crud/person-picker";
 import { DeleteButton } from "@/components/crud/delete-button";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { addEntry, updateEntry, deleteEntry } from "./actions";
 
 type Entry = {
@@ -55,7 +56,9 @@ export function EntryFormDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+      <LoadingOverlay show={pending} />
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           entry ? (
@@ -128,6 +131,7 @@ export function EntryFormDialog({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

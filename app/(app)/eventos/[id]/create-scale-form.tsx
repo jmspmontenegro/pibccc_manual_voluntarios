@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { createScale } from "../actions";
 
 export function CreateScaleForm({ eventId }: { eventId: string }) {
@@ -28,14 +29,19 @@ export function CreateScaleForm({ eventId }: { eventId: string }) {
 
   if (!open) {
     return (
-      <Button type="button" size="sm" className="mt-3" onClick={() => setOpen(true)}>
-        Criar escala
-      </Button>
+      <>
+        <LoadingOverlay show={pending} />
+        <Button type="button" size="sm" className="mt-3" onClick={() => setOpen(true)}>
+          Criar escala
+        </Button>
+      </>
     );
   }
 
   return (
-    <form action={handleSubmit} className="mt-3 flex flex-col gap-3 text-left">
+    <>
+      <LoadingOverlay show={pending} />
+      <form action={handleSubmit} className="mt-3 flex flex-col gap-3 text-left">
       <input type="hidden" name="event_id" value={eventId} />
       {error && (
         <Alert variant="destructive">
@@ -53,6 +59,7 @@ export function CreateScaleForm({ eventId }: { eventId: string }) {
       <Button type="submit" size="sm" disabled={pending}>
         {pending ? "Criando..." : "Salvar"}
       </Button>
-    </form>
+      </form>
+    </>
   );
 }

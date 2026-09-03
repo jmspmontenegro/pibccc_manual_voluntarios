@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { togglePermission } from "./actions";
 
 type Action = { domain_key: string; action_key: string; label: string };
@@ -48,7 +49,9 @@ export function PermissionMatrix({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <>
+      <LoadingOverlay show={pending} />
+      <div className="flex flex-col gap-8">
       {domains.map((domain) => {
         const domainActions = actions.filter((a) => a.domain_key === domain.key);
         if (domainActions.length === 0) return null;
@@ -93,6 +96,7 @@ export function PermissionMatrix({
           </div>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 }

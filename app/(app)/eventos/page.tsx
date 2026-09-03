@@ -8,7 +8,8 @@ export default async function EventosPage() {
 
   const { data: events } = await supabase
     .from("events")
-    .select("id, title, date, start_time, location, event_type:event_types(name)")
+    .select("id, title, date, start_time, location, event_type:event_types!inner(name, is_system)")
+    .eq("event_type.is_system", true)
     .gte("date", today)
     .order("date", { ascending: true });
 
@@ -25,7 +26,7 @@ export default async function EventosPage() {
   return (
     <main className="mx-auto flex max-w-md flex-col gap-4 p-4 sm:p-6">
       <div>
-        <h1 className="font-serif text-2xl font-bold">Cultos e Eventos</h1>
+        <h1 className="font-serif text-2xl font-bold">Cultos</h1>
         <p className="text-sm text-muted-foreground">{rows.length} próximos</p>
       </div>
 

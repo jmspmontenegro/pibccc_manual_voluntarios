@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LoadingOverlay } from "@/components/crud/loading-overlay";
 import { updateUser, resetPassword } from "./actions";
 
 type Team = { id: string; name: string };
@@ -101,13 +102,15 @@ export function UserEditDialog({
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (!next) setNewPassword(null);
-      }}
-    >
+    <>
+      <LoadingOverlay show={pending || resetting} />
+      <Dialog
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next) setNewPassword(null);
+        }}
+      >
       <DialogTrigger
         render={
           <Button type="button" variant="ghost" size="icon-sm">
@@ -283,6 +286,7 @@ export function UserEditDialog({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }

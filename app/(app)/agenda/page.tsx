@@ -1,71 +1,204 @@
-import { Church, BookOpen } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, MapPin, Plus } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { getRolePermissions, can } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-const WEEK = [
-  { label: "Qui", day: 1 },
-  { label: "Sex", day: 2 },
-  { label: "Sáb", day: 3 },
-  { label: "Dom", day: 4, active: true },
-  { label: "Seg", day: 5 },
-  { label: "Ter", day: 6 },
-  { label: "Qua", day: 7 },
-];
+const WEEKDAY_LABELS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-const EVENTS_TODAY = [
-  { icon: Church, title: "Culto Infantil", time: "10:00 - 11:30", color: "#8060FF" },
-  { icon: BookOpen, title: "Escola Bíblica", time: "09:00 - 09:45", color: "#2563AB" },
-];
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
 
-export default function AgendaPage() {
+function monthKey(year: number, month: number) {
+  return `${year}-${pad(month)}`;
+}
+
+function dateKey(year: number, month: number, day: number) {
+  return `${year}-${pad(month)}-${pad(day)}`;
+}
+
+export default async function AgendaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string; day?: string }>;
+}) {
+  const { month: monthParam, day: dayParam } = await searchParams;
+
+  const now = new Date();
+  const [year, month] = monthParam
+    ? monthParam.split("-").map(Number)
+    : [now.getFullYear(), now.getMonth() + 1];
+
+  const monthDate = new Date(year, month - 1, 1);
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const monthStart = dateKey(year, month, 1);
+  const monthEnd = dateKey(year, month, daysInMonth);
+  const todayStr = now.toISOString().slice(0, 10);
+
+  const selectedDay =
+    dayParam ?? (todayStr >= monthStart && todayStr <= monthEnd ? todayStr : monthStart);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user!.id)
+    .single();
+
+  const perms = await getRolePermissions(supabase, profile!.role);
+
+  const { data: events } = await supabase
+    .from("events")
+    .select("id, title, date, start_time, location, event_type:event_types(name)")
+    .gte("date", monthStart)
+    .lte("date", monthEnd)
+    .order("date", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  const rows = (events ?? []).map((e) => ({
+    ...e,
+    typeName: (e as any).event_type?.name ?? "",
+  }));
+
+  const eventsByDay = new Map<string, typeof rows>();
+  for (const e of rows) {
+    if (!eventsByDay.has(e.date)) eventsByDay.set(e.date, []);
+    eventsByDay.get(e.date)!.push(e);
+  }
+
+  const dayEvents = eventsByDay.get(selectedDay) ?? [];
+
+  const firstWeekday = monthDate.getDay();
+  const cells: (string | null)[] = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(dateKey(year, month, d));
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const prevMonthDate = new Date(year, month - 2, 1);
+  const nextMonthDate = new Date(year, month, 1);
+  const prevMonthKey = monthKey(prevMonthDate.getFullYear(), prevMonthDate.getMonth() + 1);
+  const nextMonthKey = monthKey(nextMonthDate.getFullYear(), nextMonthDate.getMonth() + 1);
+
+  const monthLabel = monthDate.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+  const monthLabelCapitalized = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
+
+  const selectedDayLabel = new Date(selectedDay + "T00:00:00").toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+  });
+
   return (
     <main className="mx-auto flex max-w-md flex-col gap-5 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-serif text-2xl font-bold">Agosto 2026</h1>
+          <h1 className="font-serif text-2xl font-bold">{monthLabelCapitalized}</h1>
           <p className="text-sm text-muted-foreground">Calendário do Ministério</p>
         </div>
-        <Button disabled>+ Evento</Button>
+        {can(perms, "eventos", "create") && (
+          <a href="/admin/eventos/novo">
+            <Button size="sm">
+              <Plus className="size-4" />
+              Evento
+            </Button>
+          </a>
+        )}
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center">
-        {WEEK.map((d) => (
-          <div key={d.day} className="flex flex-col items-center gap-1">
-            <span className="text-xs font-medium text-muted-foreground">{d.label}</span>
-            <span
-              className={`flex size-8 items-center justify-center rounded-full text-sm font-bold ${
-                d.active ? "bg-primary text-primary-foreground" : "text-foreground"
-              }`}
-            >
-              {d.day}
+      <div className="flex items-center justify-between">
+        <a
+          href={`/agenda?month=${prevMonthKey}`}
+          className="flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
+        >
+          <ChevronLeft className="size-4" />
+        </a>
+        <div className="grid flex-1 grid-cols-7 gap-1 text-center">
+          {WEEKDAY_LABELS.map((label) => (
+            <span key={label} className="text-xs font-medium text-muted-foreground">
+              {label}
             </span>
-          </div>
-        ))}
+          ))}
+          {cells.map((key, i) => {
+            if (!key) return <span key={`empty-${i}`} />;
+            const day = Number(key.slice(-2));
+            const isSelected = key === selectedDay;
+            const isToday = key === todayStr;
+            const hasEvents = eventsByDay.has(key);
+            return (
+              <a
+                key={key}
+                href={`/agenda?month=${monthKey(year, month)}&day=${key}`}
+                className="flex flex-col items-center gap-0.5 py-0.5"
+              >
+                <span
+                  className={cn(
+                    "flex size-8 items-center justify-center rounded-full text-sm font-bold transition-colors",
+                    isSelected
+                      ? "bg-primary text-primary-foreground"
+                      : isToday
+                        ? "text-primary ring-1 ring-primary/40"
+                        : "text-foreground"
+                  )}
+                >
+                  {day}
+                </span>
+                <span
+                  className={cn(
+                    "size-1 rounded-full",
+                    hasEvents ? "bg-primary" : "bg-transparent"
+                  )}
+                />
+              </a>
+            );
+          })}
+        </div>
+        <a
+          href={`/agenda?month=${nextMonthKey}`}
+          className="flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
+        >
+          <ChevronRight className="size-4" />
+        </a>
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="font-semibold text-muted-foreground">{EVENTS_TODAY.length} eventos neste dia</p>
-        {EVENTS_TODAY.map((e) => (
-          <div key={e.title} className="glass flex items-center gap-3 rounded-2xl p-4">
-            <span
-              className="flex size-11 shrink-0 items-center justify-center rounded-xl"
-              style={{ backgroundColor: `${e.color}1a`, color: e.color }}
-            >
-              <e.icon className="size-5" />
+        <p className="font-semibold text-muted-foreground">
+          {dayEvents.length} {dayEvents.length === 1 ? "evento" : "eventos"} · {selectedDayLabel}
+        </p>
+        {dayEvents.map((e) => (
+          <a
+            key={e.id}
+            href={`/eventos/${e.id}`}
+            className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <CalendarDays className="size-5" />
             </span>
             <div className="flex-1">
-              <p className="font-bold">{e.title}</p>
-              <p className="text-sm" style={{ color: e.color }}>
-                {e.time}
+              <p className="font-bold leading-tight">{e.title}</p>
+              <p className="text-sm text-muted-foreground">
+                {e.typeName}
+                {e.start_time ? ` · ${e.start_time.slice(0, 5)}` : ""}
               </p>
+              {e.location && (
+                <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="size-3" />
+                  {e.location}
+                </p>
+              )}
             </div>
-            <span className="h-8 w-1 rounded-full" style={{ backgroundColor: e.color }} />
-          </div>
+          </a>
         ))}
+        {dayEvents.length === 0 && (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            Nenhum evento neste dia.
+          </p>
+        )}
       </div>
-
-      <p className="text-center text-xs text-muted-foreground">
-        Conteúdo ilustrativo — agenda real ainda não implementada.
-      </p>
     </main>
   );
 }
