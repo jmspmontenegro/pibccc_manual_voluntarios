@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { NativeSelect } from "@/components/crud/native-select";
+import { DateField } from "@/components/crud/date-field";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function CadastroPage({
   searchParams,
@@ -11,6 +14,13 @@ export default async function CadastroPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
+
+  const supabase = await createClient();
+  const { data: rooms } = await supabase
+    .from("rooms")
+    .select("id, name")
+    .eq("active", true)
+    .order("name");
 
   return (
     <main
@@ -58,6 +68,19 @@ export default async function CadastroPage({
                 required
                 autoComplete="tel"
                 placeholder="(00) 00000-0000"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="birth_date">Data de nascimento</Label>
+              <DateField id="birth_date" name="birth_date" required />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="preferred_room_id">Sala preferencial</Label>
+              <NativeSelect
+                id="preferred_room_id"
+                name="preferred_room_id"
+                placeholder="Sem preferência"
+                options={(rooms ?? []).map((r) => ({ value: r.id, label: r.name }))}
               />
             </div>
             <div className="flex flex-col gap-1.5">

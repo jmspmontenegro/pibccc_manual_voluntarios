@@ -1,7 +1,8 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TERM_TEXT } from "@/lib/terms";
 import { acceptTerm } from "./terms-actions";
+import { DeclineTermButton } from "./decline-term-button";
 
 export function TermGate() {
   return (
@@ -27,11 +28,19 @@ export function TermGate() {
           {TERM_TEXT}
         </div>
 
-        <form action={acceptTerm}>
-          <Button type="submit" className="w-full">
-            Li e concordo
-          </Button>
-        </form>
+        <p className="flex items-center justify-center gap-1.5 rounded-lg bg-[#FFFBEB] px-3 py-2 text-center text-xs font-semibold italic text-[#92400E]">
+          <Eye className="size-3.5 shrink-0" />
+          Deus tá vendo você aceitar sem ler…
+        </p>
+
+        <div className="flex flex-col gap-2">
+          <form action={acceptTerm}>
+            <Button type="submit" className="w-full">
+              Li e concordo
+            </Button>
+          </form>
+          <DeclineTermButton />
+        </div>
       </div>
     </main>
   );

@@ -21,3 +21,24 @@ export async function acceptTerm() {
 
   redirect("/");
 }
+
+export async function declineTerm() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.rpc("decline_term");
+  if (error) {
+    console.error("declineTerm rpc error:", error);
+  }
+
+  await supabase.auth.signOut();
+  redirect(
+    "/login?error=" +
+      encodeURIComponent(
+        "Você recusou o Termo de Voluntariado e seu acesso foi bloqueado. Fale com a coordenação."
+      )
+  );
+}

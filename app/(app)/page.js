@@ -1,12 +1,14 @@
 import { Sparkles, AlertTriangle, FileWarning, Cake } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ROLE_LABEL, getEffectiveRole } from "@/lib/view-as";
+import { ViewAsSwitcher } from "./view-as-switcher";
+import { NextAssignmentActions } from "./next-assignment-actions";
 
-const ROLE_LABEL = {
-  admin: "Administrador",
-  coordinator: "Coordenação",
-  leader: "Supervisor",
-  volunteer: "Voluntário",
+const CONFIRMATION_LABEL = {
+  confirmed: "Confirmado",
+  declined: "Recusado",
 };
 
 export default async function HomePage() {
@@ -21,7 +23,8 @@ export default async function HomePage() {
     .eq("id", user.id)
     .single();
 
-  const role = profile?.role ?? "volunteer";
+  const realRole = profile?.role ?? "volunteer";
+  const role = await getEffectiveRole(realRole);
   const isSupervisor = role === "leader" || role === "coordinator" || role === "admin";
   const preferredRoomName = profile?.preferred_room?.name ?? null;
 
@@ -29,13 +32,23 @@ export default async function HomePage() {
   const { data: myAssignments } = await supabase
     .from("scale_assignments")
     .select(
-      "id, scale_id, scale:scales(name, event:events(id, title, date, start_time))"
+      "id, scale_id, confirmation_status, scale:scales(name, event:events(id, title, date, start_time))"
     )
     .eq("user_id", user.id);
 
   const nextAssignment = (myAssignments ?? [])
     .filter((a) => (a.scale)?.event?.date >= today)
     .sort((a, b) => a.scale.event.date.localeCompare(b.scale.event.date))[0];
+
+  let volunteersForDecline = [];
+  if (nextAssignment?.confirmation_status === "pending") {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .eq("status", "approved")
+      .order("full_name");
+    volunteersForDecline = data ?? [];
+  }
 
   let declinedCount = 0;
   if (nextAssignment && isSupervisor) {
@@ -73,15 +86,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-6 p-4 sm:p-6">
-      <div className="flex items-center gap-2.5">
-        <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[color:var(--orange-dark)] to-[color:var(--orange-light)] text-white shadow">
-          <Sparkles className="size-5" />
-        </span>
-        <div>
-          <p className="font-serif text-base font-bold leading-tight">Start</p>
-          <p className="text-xs leading-tight text-muted-foreground">PIB Campo Comprido</p>
-        </div>
-      </div>
+      {realRole === "admin" && <ViewAsSwitcher currentViewAs={role !== realRole ? role : null} />}
 
       <div className="relative overflow-hidden rounded-2xl bg-primary p-6 text-primary-foreground shadow-lg">
         <Sparkles className="absolute right-4 top-4 size-8 text-white/30" />
@@ -123,6 +128,17 @@ export default async function HomePage() {
                   {declinedCount} voluntário(s) não poderão participar dessa escala — ação
                   necessária.
                 </p>
+              )}
+              {nextAssignment.confirmation_status === "pending" ? (
+                <NextAssignmentActions
+                  assignmentId={nextAssignment.id}
+                  eventId={nextAssignment.scale.event.id}
+                  volunteers={volunteersForDecline}
+                />
+              ) : (
+                <Badge variant="secondary" className="w-fit">
+                  {CONFIRMATION_LABEL[nextAssignment.confirmation_status]}
+                </Badge>
               )}
               <a href={`/eventos/${nextAssignment.scale.event.id}`}>
                 <Button size="sm" variant="secondary" className="w-fit">

@@ -18,6 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PersonPicker, type Person } from "@/components/crud/person-picker";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { LoadingOverlay } from "@/components/crud/loading-overlay";
+import { DateField } from "@/components/crud/date-field";
 import { addEntry, updateEntry, deleteEntry } from "./actions";
 
 type Entry = {
@@ -103,10 +104,9 @@ export function EntryFormDialog({
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="entered_at">Data da falta</Label>
-            <Input
+            <DateField
               id="entered_at"
               name="entered_at"
-              type="date"
               defaultValue={entry?.entered_at ?? new Date().toISOString().slice(0, 10)}
               required
             />

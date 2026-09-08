@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Check, X } from "lucide-react";
+import { Pencil, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,10 +24,16 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { TeamBadge } from "@/components/team-badge";
-import { PersonPicker, type Person } from "@/components/crud/person-picker";
+import { type Person } from "@/components/crud/person-picker";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { LoadingOverlay } from "@/components/crud/loading-overlay";
-import { respondToAssignment, updateAssignment, deleteAssignment } from "../actions";
+import { DeclineAssignmentDialog } from "../../decline-assignment-dialog";
+import {
+  respondToAssignment,
+  updateAssignment,
+  deleteAssignment,
+  cancelAssignmentConfirmation,
+} from "../actions";
 
 const CONFIRMATION_LABEL: Record<string, string> = {
   pending: "Aguardando",
@@ -56,55 +62,6 @@ export type Assignment = {
   justification: string | null;
   attendance_status: string;
 };
-
-function DeclineDialog({ id, eventId, volunteers }: { id: string; eventId: string; volunteers: Person[] }) {
-  const [open, setOpen] = useState(false);
-  const [pending, startTransition] = useTransition();
-  const router = useRouter();
-
-  function handleSubmit(formData: FormData) {
-    formData.set("status", "declined");
-    startTransition(async () => {
-      await respondToAssignment(formData);
-      setOpen(false);
-      router.refresh();
-    });
-  }
-
-  return (
-    <>
-      <LoadingOverlay show={pending} />
-      <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button type="button" size="sm" variant="outline" />}>
-        <X className="size-4" />
-        Recusar
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Recusar escala</DialogTitle>
-        </DialogHeader>
-        <form action={handleSubmit} className="flex flex-col gap-4">
-          <input type="hidden" name="id" value={id} />
-          <input type="hidden" name="event_id" value={eventId} />
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="justification">Motivo</Label>
-            <Input id="justification" name="justification" required />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label>Sugerir substituto (opcional)</Label>
-            <PersonPicker name="substitute_user_id" people={volunteers} triggerLabel="Buscar voluntário" />
-          </div>
-          <DialogFooter>
-            <Button type="submit" variant="destructive" disabled={pending}>
-              {pending ? "Enviando..." : "Confirmar recusa"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-      </Dialog>
-    </>
-  );
-}
 
 function ManageDialog({
   assignment,
@@ -243,6 +200,16 @@ export function AssignmentCard({
     });
   }
 
+  function handleCancelConfirmation() {
+    const formData = new FormData();
+    formData.set("id", assignment.id);
+    formData.set("event_id", eventId);
+    startTransition(async () => {
+      await cancelAssignmentConfirmation(formData);
+      router.refresh();
+    });
+  }
+
   const initial = assignment.name.charAt(0).toUpperCase();
 
   return (
@@ -285,8 +252,21 @@ export function AssignmentCard({
             <Check className="size-4" />
             Confirmar
           </Button>
-          <DeclineDialog id={assignment.id} eventId={eventId} volunteers={volunteers} />
+          <DeclineAssignmentDialog id={assignment.id} eventId={eventId} volunteers={volunteers} />
         </div>
+      )}
+
+      {canManage && assignment.confirmation_status !== "pending" && (
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          disabled={pending}
+          onClick={handleCancelConfirmation}
+          className="w-fit"
+        >
+          Cancelar confirmação (voltar a pendente)
+        </Button>
       )}
       </div>
     </>

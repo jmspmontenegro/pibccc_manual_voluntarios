@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getRolePermissions, can } from "@/lib/permissions";
+import { sendApprovalEmail } from "@/lib/email";
+import { getSiteUrl } from "@/lib/site-url";
 
 async function requirePermission(action: "create" | "edit" | "delete") {
   const supabase = await createClient();
@@ -71,6 +73,38 @@ export async function createUser(formData: FormData) {
   // bloqueio automático de handle_new_user() é só pro autocadastro público.
   if (!error && data.user) {
     await admin.from("profiles").update({ status: "approved" }).eq("id", data.user.id);
+  }
+
+  revalidatePath("/admin/usuarios");
+  return { error: error?.message ?? null };
+}
+
+// Aprovação de cadastro pendente: admin OU coordinator (ver migration
+// 0027_approve_pending_user.sql) — mais estreito que `usuarios:edit` da
+// matriz dinâmica (só admin tem hoje), por isso não reusa requirePermission.
+export async function approveUser(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Não autenticado." };
+
+  const id = formData.get("id") as string;
+  const { error } = await supabase.rpc("approve_pending_user", { target_id: id });
+
+  if (!error) {
+    const { data: approved } = await supabase
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", id)
+      .single();
+    if (approved) {
+      await sendApprovalEmail({
+        to: approved.email,
+        volunteerName: approved.full_name || approved.email,
+        loginUrl: `${getSiteUrl()}/login`,
+      });
+    }
   }
 
   revalidatePath("/admin/usuarios");

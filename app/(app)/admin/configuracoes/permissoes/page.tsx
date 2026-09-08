@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveRole } from "@/lib/view-as";
 import { PermissionMatrix } from "./permission-matrix";
 
 export default async function PermissoesPage() {
@@ -15,10 +16,12 @@ export default async function PermissoesPage() {
     .eq("id", user!.id)
     .single();
 
-  // Hard-gated pra admin real (não pela matriz dinâmica) — a tela que
-  // configura permissões não deve depender das próprias permissões que
-  // ela controla. Ver AGENTS.md → RBAC dinâmico.
-  if (currentProfile?.role !== "admin") redirect("/");
+  // Hard-gated pra admin (real ou "vendo como", ver lib/view-as.ts) — não
+  // pela matriz dinâmica: a tela que configura permissões não deve
+  // depender das próprias permissões que ela controla. Ver AGENTS.md →
+  // RBAC dinâmico.
+  const role = await getEffectiveRole(currentProfile?.role ?? "volunteer");
+  if (role !== "admin") redirect("/");
 
   const { data: domains } = await supabase.from("permission_domains").select("key, label");
   const { data: actions } = await supabase

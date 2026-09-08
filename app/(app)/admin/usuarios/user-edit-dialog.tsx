@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, KeyRound, Copy } from "lucide-react";
+import { Pencil, KeyRound, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { LoadingOverlay } from "@/components/crud/loading-overlay";
-import { updateUser, resetPassword } from "./actions";
+import { DateField } from "@/components/crud/date-field";
+import { updateUser, resetPassword, approveUser } from "./actions";
 
 type Team = { id: string; name: string };
 type Room = { id: string; name: string };
@@ -60,18 +61,35 @@ export function UserEditDialog({
   teams,
   rooms,
   semeandoTempoHistory,
+  defaultOpen,
 }: {
   profile: Profile;
   teams: Team[];
   rooms: Room[];
   semeandoTempoHistory: SemeandoTempoRecord[];
+  defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const [error, setError] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [resetting, startResetTransition] = useTransition();
+  const [approving, startApproveTransition] = useTransition();
   const router = useRouter();
+
+  function handleApprove() {
+    setError(null);
+    startApproveTransition(async () => {
+      const formData = new FormData();
+      formData.set("id", profile.id);
+      const result = await approveUser(formData);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      router.refresh();
+    });
+  }
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -103,7 +121,7 @@ export function UserEditDialog({
 
   return (
     <>
-      <LoadingOverlay show={pending || resetting} />
+      <LoadingOverlay show={pending || resetting || approving} />
       <Dialog
         open={open}
         onOpenChange={(next) => {
@@ -130,6 +148,18 @@ export function UserEditDialog({
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
+          )}
+
+          {profile.status === "pending" && (
+            <Button
+              type="button"
+              className="w-full bg-green-600 text-white hover:bg-green-700"
+              onClick={handleApprove}
+              disabled={approving}
+            >
+              <Check className="size-4" />
+              Aprovar cadastro
+            </Button>
           )}
 
           {newPassword && (
@@ -167,7 +197,7 @@ export function UserEditDialog({
 
           <div className="flex flex-col gap-1.5">
             <Label>Data de nascimento</Label>
-            <Input name="birth_date" type="date" defaultValue={profile.birth_date ?? ""} />
+            <DateField name="birth_date" defaultValue={profile.birth_date} />
           </div>
 
           <div className="flex flex-col gap-1.5">

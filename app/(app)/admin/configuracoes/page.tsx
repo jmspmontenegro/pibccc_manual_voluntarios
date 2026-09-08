@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { ArrowLeft, Download } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectiveRole } from "@/lib/view-as";
 import { updateSettings } from "./actions";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -24,7 +25,8 @@ export default async function ConfiguracoesPage() {
     .eq("id", user!.id)
     .single();
 
-  if (currentProfile?.role !== "admin") redirect("/");
+  const role = await getEffectiveRole(currentProfile?.role ?? "volunteer");
+  if (role !== "admin") redirect("/");
 
   const { data: settings } = await supabase
     .from("app_settings")

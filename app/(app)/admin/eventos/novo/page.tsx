@@ -30,25 +30,28 @@ export default async function NovoEventoPage() {
 
   const { data: teams } = await supabase.from("teams").select("id, name, color").order("name");
 
-  const { data: teamMembersRaw } = await supabase
-    .from("team_members")
-    .select("team_id, profile:profiles!team_members_user_id_fkey(id, full_name, email)")
-    .eq("active", true);
-
-  const membersByTeam: Record<string, { id: string; full_name: string | null; email: string }[]> = {};
-  for (const tm of teamMembersRaw ?? []) {
-    const profile = (tm as any).profile;
-    if (!profile) continue;
-    (membersByTeam[tm.team_id] ??= []).push(profile);
-  }
-
   const { data: rooms } = await supabase.from("rooms").select("id, name").order("name");
 
   const { data: volunteers } = await supabase
     .from("profiles")
-    .select("id, full_name, email")
+    .select("id, full_name, email, team_id, preferred_room_id")
     .eq("status", "approved")
     .order("full_name");
+
+  // Elenco real de cada equipe hoje é o campo "equipe principal"
+  // (profiles.team_id), não team_members — essa tabela M:N existe no
+  // schema mas nunca teve tela pra popular, sempre fica vazia.
+  const membersByTeam: Record<string, { id: string; full_name: string | null; email: string; team_id: string | null; preferred_room_id: string | null }[]> = {};
+  for (const v of volunteers ?? []) {
+    if (!v.team_id) continue;
+    (membersByTeam[v.team_id] ??= []).push({
+      id: v.id,
+      full_name: v.full_name,
+      email: v.email,
+      team_id: v.team_id,
+      preferred_room_id: v.preferred_room_id,
+    });
+  }
 
   const { data: templates } = await supabase
     .from("checklist_templates")

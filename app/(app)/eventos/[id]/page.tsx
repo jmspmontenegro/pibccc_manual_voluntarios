@@ -9,6 +9,7 @@ import { CreateScaleForm } from "./create-scale-form";
 import { RsvpCard } from "./rsvp-card";
 import { ChecklistSection } from "./checklist-section";
 import { RoteiroSection } from "./roteiro-section";
+import { Badge } from "@/components/ui/badge";
 
 export default async function EventoDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -44,6 +45,13 @@ export default async function EventoDetailPage({ params }: { params: Promise<{ i
 
   const scaleIds = (scales ?? []).map((s) => s.id);
 
+  const { data: scaleRoomsRaw } = scaleIds.length
+    ? await supabase.from("scale_rooms").select("scale_id, room:rooms(name)").in("scale_id", scaleIds)
+    : { data: [] };
+  const { data: scaleTeamsRaw } = scaleIds.length
+    ? await supabase.from("scale_teams").select("scale_id, team:teams(name, color)").in("scale_id", scaleIds)
+    : { data: [] };
+
   const { data: assignmentsRaw } = scaleIds.length
     ? await supabase
         .from("scale_assignments")
@@ -55,22 +63,20 @@ export default async function EventoDetailPage({ params }: { params: Promise<{ i
 
   const { data: rooms } = await supabase.from("rooms").select("id, name").order("name");
   const { data: teams } = await supabase.from("teams").select("id, name, color").order("name");
-  const { data: teamMembersRaw } = await supabase
-    .from("team_members")
-    .select("team_id, profile:profiles!team_members_user_id_fkey(id, full_name, email)")
-    .eq("active", true);
 
   const { data: volunteers } = await supabase
     .from("profiles")
-    .select("id, full_name, email")
+    .select("id, full_name, email, team_id")
     .eq("status", "approved")
     .order("full_name");
 
+  // Elenco real de cada equipe hoje é o campo "equipe principal"
+  // (profiles.team_id), não team_members — essa tabela M:N existe no
+  // schema mas nunca teve tela pra popular, sempre fica vazia.
   const membersByTeam: Record<string, { id: string; full_name: string | null; email: string }[]> = {};
-  for (const tm of teamMembersRaw ?? []) {
-    const profile = (tm as any).profile;
-    if (!profile) continue;
-    (membersByTeam[tm.team_id] ??= []).push(profile);
+  for (const v of volunteers ?? []) {
+    if (!v.team_id) continue;
+    (membersByTeam[v.team_id] ??= []).push({ id: v.id, full_name: v.full_name, email: v.email });
   }
 
   let myRsvpStatus = "pending";
@@ -154,6 +160,14 @@ export default async function EventoDetailPage({ params }: { params: Promise<{ i
       )}
 
       {(scales ?? []).map((scale) => {
+        const operatingRooms = (scaleRoomsRaw ?? [])
+          .filter((item) => item.scale_id === scale.id)
+          .map((item: any) => item.room?.name)
+          .filter(Boolean);
+        const responsibleTeams = (scaleTeamsRaw ?? [])
+          .filter((item) => item.scale_id === scale.id)
+          .map((item: any) => item.team?.name)
+          .filter(Boolean);
         const assignments: Assignment[] = (assignmentsRaw ?? [])
           .filter((a) => a.scale_id === scale.id)
           .map((a) => {
@@ -186,6 +200,17 @@ export default async function EventoDetailPage({ params }: { params: Promise<{ i
                 canManage={canManage}
               />
             </div>
+
+            {(operatingRooms.length > 0 || responsibleTeams.length > 0) && (
+              <div className="flex flex-wrap gap-1.5">
+                {responsibleTeams.map((team) => (
+                  <Badge key={`team-${team}`} variant="secondary">Equipe {team}</Badge>
+                ))}
+                {operatingRooms.map((room) => (
+                  <Badge key={`room-${room}`} variant="outline">Sala {room}</Badge>
+                ))}
+              </div>
+            )}
 
             {canManage && (
               <div className="flex flex-wrap gap-2">

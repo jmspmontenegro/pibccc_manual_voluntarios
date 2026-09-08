@@ -31,9 +31,9 @@ const STATUS_VARIANT: Record<string, "default" | "destructive" | "outline"> = {
 export default async function UsuariosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sort?: string }>;
+  searchParams: Promise<{ q?: string; sort?: string; highlight?: string }>;
 }) {
-  const { q, sort = "created_at" } = await searchParams;
+  const { q, sort = "created_at", highlight } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -136,6 +136,7 @@ export default async function UsuariosPage({
                     teams={teams ?? []}
                     rooms={rooms ?? []}
                     semeandoTempoHistory={semeandoTempoByUser.get(p.id) ?? []}
+                    defaultOpen={p.id === highlight}
                   />
                 )}
               </div>

@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
-import { ArrowLeft, CalendarDays, Plus } from "lucide-react";
+import { ArrowLeft, CalendarDays, Pencil, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRolePermissions, can } from "@/lib/permissions";
 import { ListToolbar } from "@/components/crud/list-toolbar";
 import { DeleteButton } from "@/components/crud/delete-button";
 import { Button } from "@/components/ui/button";
-import { EventFormDialog } from "./event-form-dialog";
 import { deleteEvent } from "@/app/(app)/eventos/actions";
 
 export default async function AdminEventosPage({
@@ -39,11 +38,6 @@ export default async function AdminEventosPage({
   query = query.order("date", { ascending: sort !== "date_desc" });
 
   const { data: events } = await query;
-  const { data: eventTypes } = await supabase
-    .from("event_types")
-    .select("id, name")
-    .eq("active", true)
-    .order("name");
 
   const canCreate = can(perms, "eventos", "create");
   const canEdit = can(perms, "eventos", "edit");
@@ -111,19 +105,11 @@ export default async function AdminEventosPage({
             {(canEdit || canDelete) && (
               <div className="flex gap-1">
                 {canEdit && (
-                  <EventFormDialog
-                    event={{
-                      id: e.id,
-                      event_type_id: e.event_type_id,
-                      title: e.title,
-                      description: e.description,
-                      date: e.date,
-                      start_time: e.start_time,
-                      end_time: e.end_time,
-                      location: e.location,
-                    }}
-                    eventTypes={eventTypes ?? []}
-                  />
+                  <a href={`/admin/eventos/${e.id}/editar`}>
+                    <Button type="button" variant="ghost" size="icon-sm">
+                      <Pencil className="size-4" />
+                    </Button>
+                  </a>
                 )}
                 {canDelete && (
                   <DeleteButton

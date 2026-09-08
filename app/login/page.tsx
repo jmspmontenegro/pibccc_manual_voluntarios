@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; redirect?: string }>;
 }) {
   const params = await searchParams;
 
@@ -46,6 +46,7 @@ export default async function LoginPage({
           )}
 
           <form action={login} className="flex flex-col gap-4">
+            {params.redirect && <input type="hidden" name="redirect" value={params.redirect} />}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="email">E-mail</Label>
               <Input id="email" name="email" type="email" required autoComplete="email" />

@@ -7,12 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-const ROLE_LABEL: Record<string, string> = {
-  admin: "Administrador",
-  leader: "Supervisor",
-  volunteer: "Voluntário",
-};
+import { ROLE_LABEL, getEffectiveRole } from "@/lib/view-as";
+import { DateField } from "@/components/crud/date-field";
 
 export default async function PerfilPage() {
   const supabase = await createClient();
@@ -22,9 +18,11 @@ export default async function PerfilPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, email, phone, address, role")
+    .select("full_name, email, phone, address, birth_date, role")
     .eq("id", user!.id)
     .single();
+
+  const role = await getEffectiveRole(profile?.role ?? "volunteer");
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-4 p-4 sm:p-6">
@@ -36,7 +34,7 @@ export default async function PerfilPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Meu perfil</CardTitle>
-          <Badge variant="secondary">{ROLE_LABEL[profile?.role ?? "volunteer"]}</Badge>
+          <Badge variant="secondary">{ROLE_LABEL[role] ?? role}</Badge>
         </CardHeader>
         <CardContent>
           <form action={updateOwnProfile} className="flex flex-col gap-4">
@@ -55,6 +53,10 @@ export default async function PerfilPage() {
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="address">Endereço</Label>
               <Input id="address" name="address" type="text" defaultValue={profile?.address ?? ""} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="birth_date">Data de nascimento</Label>
+              <DateField id="birth_date" name="birth_date" defaultValue={profile?.birth_date} />
             </div>
             <Button type="submit">Salvar</Button>
           </form>

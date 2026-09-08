@@ -1,9 +1,9 @@
 import {
   Settings,
   BookOpen,
+  GraduationCap,
   ClipboardList,
   Trophy,
-  MessageSquare,
   FolderOpen,
   Clock,
   Users,
@@ -18,16 +18,10 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRolePermissions, can } from "@/lib/permissions";
+import { ROLE_LABEL, getEffectiveRole } from "@/lib/view-as";
 import { logout } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
-const ROLE_LABEL: Record<string, string> = {
-  admin: "Administrador",
-  coordinator: "Coordenação",
-  leader: "Supervisor",
-  volunteer: "Voluntário",
-};
 
 function MoreLink({
   href,
@@ -79,7 +73,8 @@ export default async function MaisPage() {
     .single();
 
   const perms = await getRolePermissions(supabase, profile!.role);
-  const isAdmin = profile!.role === "admin";
+  const role = await getEffectiveRole(profile!.role);
+  const isAdmin = role === "admin";
   const initial = (profile?.full_name || profile?.email || "?").charAt(0).toUpperCase();
 
   return (
@@ -96,13 +91,29 @@ export default async function MaisPage() {
         <div className="flex-1">
           <p className="font-bold">{profile?.full_name || profile?.email}</p>
           <p className="text-xs text-white/80">
-            {ROLE_LABEL[profile?.role ?? ""] ?? profile?.role} · PIB Campo Comprido
+            {ROLE_LABEL[role] ?? role} · PIB Campo Comprido
           </p>
         </div>
         <Pencil className="size-4 text-white/80" />
       </a>
 
       <div className="flex flex-col gap-3">
+        <MoreLink
+          href="/manual"
+          icon={BookOpen}
+          iconBg="#A98CFF"
+          title="Manual do Voluntário"
+          subtitle="Guia completo para voluntários Kids"
+        />
+        {role !== "volunteer" && (
+          <MoreLink
+            href="/manual-lider"
+            icon={GraduationCap}
+            iconBg="#6D28D9"
+            title="Manual do Líder"
+            subtitle="Conteúdo exclusivo pra liderança"
+          />
+        )}
         <MoreLink
           href="/semeando-tempo"
           icon={Clock}
@@ -117,41 +128,33 @@ export default async function MaisPage() {
           title="Documentos"
           subtitle="Certidão de antecedentes"
         />
-        <MoreLink
-          href="/manual"
-          icon={BookOpen}
-          iconBg="#A98CFF"
-          title="Manual do Líder"
-          subtitle="Guia completo para líderes Kids"
-        />
-        <MoreLink
-          icon={ClipboardList}
-          iconBg="#22C55E"
-          title="Escala de Serviço"
-          subtitle="Escalas semanais e mensais"
-          disabled
-        />
-        <MoreLink
-          icon={Trophy}
-          iconBg="#F59E0B"
-          title="Relatórios"
-          subtitle="Presença, crescimento e métricas"
-          disabled
-        />
-        <MoreLink
-          icon={MessageSquare}
-          iconBg="#EC4899"
-          title="Comunicados"
-          subtitle="Avisos e recados da liderança"
-          disabled
-        />
-        <MoreLink
-          icon={FolderOpen}
-          iconBg="#14B8A6"
-          title="Materiais"
-          subtitle="Lições, músicas e downloads"
-          disabled
-        />
+        {can(perms, "eventos", "view") && (
+          <MoreLink
+            href="/admin/eventos"
+            icon={ClipboardList}
+            iconBg="#DB2777"
+            title="Gerenciar Eventos"
+            subtitle="Criar e editar eventos e cultos"
+          />
+        )}
+        {(role === "admin" || role === "coordinator") && (
+          <>
+            <MoreLink
+              icon={Trophy}
+              iconBg="#F59E0B"
+              title="Relatórios"
+              subtitle="Presença, crescimento e métricas"
+              disabled
+            />
+            <MoreLink
+              icon={FolderOpen}
+              iconBg="#14B8A6"
+              title="Materiais"
+              subtitle="Lições, músicas e downloads"
+              disabled
+            />
+          </>
+        )}
 
         {can(perms, "usuarios", "view") && (
           <MoreLink
@@ -160,15 +163,6 @@ export default async function MaisPage() {
             iconBg="#5A3FD6"
             title="Usuários"
             subtitle="Aprovar, editar e bloquear acessos"
-          />
-        )}
-        {can(perms, "equipes", "view") && (
-          <MoreLink
-            href="/admin/equipes"
-            icon={Users}
-            iconBg="#2563AB"
-            title="Equipes"
-            subtitle="Cadastro de equipes do ministério"
           />
         )}
         {can(perms, "salas", "view") && (
@@ -180,22 +174,13 @@ export default async function MaisPage() {
             subtitle="Cadastro de salas do ministério"
           />
         )}
-        {can(perms, "tipos_evento", "view") && (
+        {can(perms, "equipes", "view") && (
           <MoreLink
-            href="/admin/tipos-evento"
-            icon={Tags}
-            iconBg="#D97706"
-            title="Tipos de Evento"
-            subtitle="Culto, Reunião, Culto Especial..."
-          />
-        )}
-        {can(perms, "eventos", "view") && (
-          <MoreLink
-            href="/admin/eventos"
-            icon={ClipboardList}
-            iconBg="#DB2777"
-            title="Gerenciar Eventos"
-            subtitle="Criar e editar eventos e cultos"
+            href="/admin/equipes"
+            icon={Users}
+            iconBg="#2563AB"
+            title="Equipes"
+            subtitle="Cadastro de equipes do ministério"
           />
         )}
         {can(perms, "checklists", "view") && (
@@ -205,6 +190,15 @@ export default async function MaisPage() {
             iconBg="#0D9488"
             title="Checklists"
             subtitle="Modelos reutilizáveis pras escalas"
+          />
+        )}
+        {can(perms, "tipos_evento", "view") && (
+          <MoreLink
+            href="/admin/tipos-evento"
+            icon={Tags}
+            iconBg="#D97706"
+            title="Tipos de Evento"
+            subtitle="Culto, Reunião, Culto Especial..."
           />
         )}
         {can(perms, "configuracoes", "view") && (

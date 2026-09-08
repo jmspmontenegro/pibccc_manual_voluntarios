@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getRolePermissions, can } from "@/lib/permissions";
-import { getSignedUrl } from "@/lib/storage";
+import { getSignedUrl, sanitizeFilename } from "@/lib/storage";
 
 const BUCKET = "volunteer-documents";
 
@@ -17,7 +17,7 @@ export async function uploadDocument(formData: FormData) {
   const file = formData.get("file") as File;
   if (!file || file.size === 0) return { error: "Selecione um arquivo." };
 
-  const path = `${user.id}/${Date.now()}-${file.name}`;
+  const path = `${user.id}/${Date.now()}-${sanitizeFilename(file.name)}`;
   const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
   if (uploadError) return { error: uploadError.message };
 

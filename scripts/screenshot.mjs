@@ -26,12 +26,18 @@ await page.click('button[type=submit]');
 await page.waitForTimeout(2000);
 console.log("after click url:", page.url());
 
+if (await page.locator('button:has-text("Li e concordo")').isVisible().catch(() => false)) {
+  await page.click('button:has-text("Li e concordo")');
+  await page.waitForTimeout(1500);
+}
+
 await shot("/", "03-home");
 await shot("/agenda", "04-agenda");
 await shot("/eventos", "05-eventos");
 await shot("/pessoas", "06-pessoas");
 await shot("/mais", "07-mais");
 await shot("/manual", "08-manual");
+await shot("/manual-lider", "08b-manual-lider");
 await shot("/perfil", "09-perfil");
 await shot("/admin/usuarios", "10-usuarios");
 await shot("/admin/equipes", "11-equipes");

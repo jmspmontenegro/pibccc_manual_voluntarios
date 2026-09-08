@@ -1,22 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { NativeSelect } from "@/components/crud/native-select";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+
+const HOUR_OPTIONS = [
+  { value: "none", label: "Sem horário" },
+  ...HOURS.map((h) => ({ value: h, label: `${h}h` })),
+];
+const MINUTE_OPTIONS = MINUTES.map((m) => ({ value: m, label: m }));
 
 /**
  * Seletor de horário em 24h (00-23h), sem depender do formato AM/PM que o
  * <input type="time"> nativo herda da configuração regional do sistema
  * operacional — não da lang da página, por isso não dava pra forçar via
- * lang="pt-BR".
+ * lang="pt-BR". Usa <select> nativo (NativeSelect) pra abrir a interface
+ * de escolha do próprio celular, não uma popup custom.
  */
 export function TimeField({
   name,
@@ -33,43 +34,22 @@ export function TimeField({
   return (
     <div className="flex gap-2">
       <input type="hidden" name={name} value={value} />
-      <Select
+      <NativeSelect
+        className="w-full"
         value={hour || "none"}
-        onValueChange={(v) => {
-          const h = v === "none" ? "" : (v as string);
+        options={HOUR_OPTIONS}
+        onChange={(e) => {
+          const h = e.target.value === "none" ? "" : e.target.value;
           setHour(h);
           if (h && !minute) setMinute("00");
         }}
-        items={{ none: "Sem horário", ...Object.fromEntries(HOURS.map((h) => [h, `${h}h`])) }}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Hora" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="none">Sem horário</SelectItem>
-          {HOURS.map((h) => (
-            <SelectItem key={h} value={h}>
-              {h}h
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
+      />
+      <NativeSelect
+        className="w-20 shrink-0"
         value={minute || "00"}
-        onValueChange={(v) => setMinute(v as string)}
-        items={Object.fromEntries(MINUTES.map((m) => [m, m]))}
-      >
-        <SelectTrigger className="w-20 shrink-0">
-          <SelectValue placeholder="Min" />
-        </SelectTrigger>
-        <SelectContent>
-          {MINUTES.map((m) => (
-            <SelectItem key={m} value={m}>
-              {m}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        options={MINUTE_OPTIONS}
+        onChange={(e) => setMinute(e.target.value)}
+      />
     </div>
   );
 }
